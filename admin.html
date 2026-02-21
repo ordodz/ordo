@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORDO · لوحة الإدارة</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --g:#1b5e42;--gl:#236b50;--gd:#0d3324;--gx:#0a2518;
+  --accent:#c8a84b;--ac2:#e8c56a;
+  --w:#fff;--off:#f0f4f2;--surface:#f7faf8;
+  --text:#0e1f16;--muted:#4d6b5c;--faint:#8aab97;
+  --b:#d4e4da;--b2:#e8f0ec;
+  --red:#c62828;--blue:#1565c0;--orange:#e65100;--purple:#6a1b9a;
+  --sb:260px;
+  --radius:14px;
+}
+html,body{height:100%;font-family:'Cairo','Tajawal',sans-serif;direction:rtl;background:var(--off);color:var(--text);overflow:hidden}
+
+/* ═══════════════ SIDEBAR ═══════════════ */
+.sb{
+  position:fixed;top:0;right:0;width:var(--sb);height:100vh;
+  background:var(--gx);display:flex;flex-direction:column;z-index:200;
+  border-left:1px solid rgba(255,255,255,0.04);
+  overflow-y:auto;
+}
+.sb::-webkit-scrollbar{width:3px}
+.sb::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+
+.sb-brand{
+  padding:1.4rem 1.5rem 1.1rem;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;gap:.8rem;
+}
+.sb-logo{font-family:'Tajawal',sans-serif;font-size:1.5rem;font-weight:900;color:#fff;letter-spacing:4px}
+.sb-flag{width:22px;height:15px;border-radius:2px;object-fit:cover}
+.sb-admin-badge{
+  margin-right:auto;
+  background:linear-gradient(135deg,var(--accent),var(--ac2));
+  color:var(--gd);font-size:.52rem;font-weight:800;
+  padding:.18rem .55rem;border-radius:4px;letter-spacing:.8px;
+  font-family:'IBM Plex Mono',monospace;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1b5e42;
+  border-radius: 10px;
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1b5e42;
+}
+.sb-admin-card{
+  margin:1rem 1.2rem;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px;padding:.9rem 1rem;
+}
+.sb-av{
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--gl));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;font-weight:800;color:#fff;
+  margin-bottom:.6rem;
+  box-shadow:0 4px 12px rgba(200,168,75,0.3);
+}
+.sb-name{font-size:.85rem;font-weight:700;color:#fff}
+.sb-role{font-size:.65rem;color:var(--accent);font-weight:600;margin-top:.1rem;font-family:'IBM Plex Mono',monospace}
+
+.ngl{
+  font-size:.55rem;font-weight:800;color:rgba(255,255,255,0.2);
+  text-transform:uppercase;letter-spacing:2.5px;
+  padding:.9rem 1.5rem .3rem;
+}
+.ni{
+  display:flex;align-items:center;gap:.75rem;
+  padding:.62rem 1.5rem;color:rgba(255,255,255,0.5);
+  font-size:.8rem;font-weight:600;cursor:pointer;
+  transition:all .15s;border-right:3px solid transparent;
+  text-decoration:none;
+}
+.ni i{width:16px;text-align:center;font-size:.82rem;color:rgba(255,255,255,0.25);transition:color .15s}
+.ni:hover{color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.04)}
+.ni:hover i{color:rgba(255,255,255,0.5)}
+.ni.act{color:#fff;background:rgba(255,255,255,0.07);border-right-color:var(--accent)}
+.ni.act i{color:var(--accent)}
+.ni .nbadge{
+  margin-right:auto;min-width:18px;height:18px;
+  background:var(--red);color:#fff;font-size:.6rem;font-weight:800;
+  border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px;
+}
+.ni .nbadge.green{background:var(--g)}
+.sb-bot{
+  margin-top:auto;padding:1rem 1.2rem;
+  border-top:1px solid rgba(255,255,255,0.05);
+}
+.logout{
+  display:flex;align-items:center;gap:.6rem;
+  color:rgba(255,255,255,0.3);font-size:.77rem;
+  cursor:pointer;background:none;border:none;
+  font-family:'Cairo',sans-serif;width:100%;
+  padding:.5rem .3rem;border-radius:7px;transition:all .2s;
+}
+.logout:hover{color:var(--red);background:rgba(198,40,40,0.08)}
+
+/* ═══════════════ MAIN ═══════════════ */
+.main{margin-right:var(--sb);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.topbar{
+  background:#fff;border-bottom:1px solid var(--b);
+  padding:0 1.8rem;height:60px;display:flex;align-items:center;
+  justify-content:space-between;flex-shrink:0;z-index:100;
+  box-shadow:0 1px 8px rgba(0,0,0,0.04);
+}
+.tb-left{display:flex;align-items:center;gap:1rem}
+.tb-title{font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text)}
+.tb-sub{font-size:.72rem;color:var(--faint);font-weight:500}
+.tb-right{display:flex;align-items:center;gap:.7rem}
+.tb-btn{
+  display:flex;align-items:center;gap:.4rem;
+  padding:.45rem .9rem;border:1.5px solid var(--b);
+  border-radius:8px;font-size:.75rem;font-weight:700;
+  color:var(--muted);cursor:pointer;background:#fff;
+  font-family:'Cairo',sans-serif;transition:all .2s;
+}
+.tb-btn:hover{border-color:var(--g);color:var(--g)}
+.tb-btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
+.tb-btn.primary:hover{background:var(--gd)}
+.tb-btn i{font-size:.78rem}
+.live-dot{
+  width:8px;height:8px;border-radius:50%;background:#22c55e;
+  box-shadow:0 0 0 3px rgba(34,197,94,0.2);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(34,197,94,0.2)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0.1)}}
+
+/* ═══════════════ CONTENT ═══════════════ */
+.content{flex:1;overflow-y:auto;padding:1.5rem 1.8rem}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+
+.page{display:none}.page.act{display:block}
+
+/* ═══════════════ STAT CARDS ═══════════════ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.2rem}
+.stat{
+  background:#fff;border:1px solid var(--b);
+  border-radius:var(--radius);padding:1.3rem 1.4rem;
+  position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;
+}
+.stat:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.07)}
+.stat-ico{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;margin-bottom:.9rem;
+}
+.stat-val{font-family:'Tajawal',sans-serif;font-size:1.9rem;font-weight:900;color:var(--text);line-height:1}
+.stat-lbl{font-size:.72rem;color:var(--muted);font-weight:600;margin-top:.35rem}
+.stat-delta{
+  font-size:.68rem;font-weight:700;margin-top:.5rem;
+  display:flex;align-items:center;gap:.3rem;
+}
+.stat-delta.up{color:#16a34a}.stat-delta.dn{color:var(--red)}
+.stat::after{
+  content:'';position:absolute;left:-20px;bottom:-20px;
+  width:80px;height:80px;border-radius:50%;
+  opacity:.05;
+}
+.stat.g .stat-ico{background:rgba(27,94,66,0.1);color:var(--g)}
+.stat.g::after{background:var(--g)}
+.stat.a .stat-ico{background:rgba(200,168,75,0.12);color:var(--accent)}
+.stat.a::after{background:var(--accent)}
+.stat.r .stat-ico{background:rgba(198,40,40,0.08);color:var(--red)}
+.stat.r::after{background:var(--red)}
+.stat.b .stat-ico{background:rgba(21,101,192,0.08);color:var(--blue)}
+.stat.b::after{background:var(--blue)}
+
+/* ═══════════════ CARDS ═══════════════ */
+.card{
+  background:#fff;border:1px solid var(--b);
+  border-radius:var(--radius);margin-bottom:1.1rem;
+  overflow:hidden;
+}
+.card-head{
+  padding:1.1rem 1.4rem;border-bottom:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-head h3{
+  font-family:'Tajawal',sans-serif;font-size:.97rem;font-weight:800;
+  color:var(--text);display:flex;align-items:center;gap:.5rem;
+}
+.card-head h3 i{color:var(--g);font-size:.88rem}
+.card-body{padding:1.2rem 1.4rem}
+
+/* ═══════════════ GRID LAYOUTS ═══════════════ */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.1rem}
+.g13{display:grid;grid-template-columns:1fr 1.8fr;gap:1.1rem}
+.g31{display:grid;grid-template-columns:2fr 1fr;gap:1.1rem}
+
+/* ═══════════════ TABLE ═══════════════ */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th{
+  text-align:right;padding:.65rem 1rem;
+  font-size:.65rem;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;
+  background:var(--surface);border-bottom:1px solid var(--b);
+}
+td{padding:.75rem 1rem;border-bottom:1px solid var(--b2);color:var(--text);font-weight:500}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface)}
+.tbl-actions{display:flex;gap:.4rem;justify-content:flex-end}
+.act-btn{
+  padding:.28rem .65rem;border-radius:6px;font-size:.7rem;
+  font-weight:700;cursor:pointer;border:none;
+  font-family:'Cairo',sans-serif;transition:all .15s;
+  display:inline-flex;align-items:center;gap:.3rem;
+}
+.act-btn.g{background:rgba(27,94,66,0.1);color:var(--g)}
+.act-btn.g:hover{background:var(--g);color:#fff}
+.act-btn.r{background:rgba(198,40,40,0.08);color:var(--red)}
+.act-btn.r:hover{background:var(--red);color:#fff}
+.act-btn.a{background:rgba(200,168,75,0.1);color:#8a6d00}
+.act-btn.a:hover{background:var(--accent);color:#fff}
+.act-btn.b{background:rgba(21,101,192,0.08);color:var(--blue)}
+.act-btn.b:hover{background:var(--blue);color:#fff}
+
+/* ═══════════════ BADGES ═══════════════ */
+.bdg{
+  display:inline-flex;align-items:center;gap:.3rem;
+  font-size:.66rem;font-weight:800;padding:.22rem .6rem;
+  border-radius:50px;
+}
+.bdg.pnd{background:rgba(230,81,0,0.1);color:var(--orange)}
+.bdg.cnf{background:rgba(27,94,66,0.1);color:var(--g)}
+.bdg.cnl{background:rgba(198,40,40,0.08);color:var(--red)}
+.bdg.act{background:rgba(21,101,192,0.1);color:var(--blue)}
+.bdg.sus{background:rgba(106,27,154,0.08);color:var(--purple)}
+
+/* ═══════════════ FORM ═══════════════ */
+.fg{margin-bottom:.9rem}
+.fg label{display:block;font-size:.72rem;font-weight:700;color:var(--text);margin-bottom:.32rem}
+.field{
+  width:100%;padding:.72rem .9rem;
+  border:1.5px solid var(--b);border-radius:9px;
+  font-family:'Cairo',sans-serif;font-size:.83rem;
+  color:var(--text);background:#fff;outline:none;
+  transition:border-color .2s;
+}
+.field:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(27,94,66,0.07)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.78rem 1.5rem;background:var(--g);color:#fff;
+  border:none;border-radius:9px;font-family:'Cairo',sans-serif;
+  font-size:.85rem;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn:hover{background:var(--gd);transform:translateY(-1px);box-shadow:0 4px 14px rgba(27,94,66,.2)}
+.btn.out{background:transparent;color:var(--g);border:1.5px solid var(--g)}
+.btn.out:hover{background:rgba(27,94,66,0.06)}
+.btn.red{background:var(--red)}
+.btn.red:hover{background:#b71c1c}
+.btn.sm{padding:.48rem 1rem;font-size:.78rem}
+
+/* ═══════════════ SEARCH BAR ═══════════════ */
+.search-row{
+  display:flex;align-items:center;gap:.7rem;
+  margin-bottom:1.1rem;flex-wrap:wrap;
+}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap i{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);color:var(--faint);font-size:.8rem;pointer-events:none}
+.search-input{
+  width:100%;padding:.65rem .85rem .65rem 2.5rem;
+  border:1.5px solid var(--b);border-radius:9px;
+  font-family:'Cairo',sans-serif;font-size:.82rem;
+  background:#fff;outline:none;color:var(--text);
+  transition:border-color .2s;
+}
+.search-input:focus{border-color:var(--g)}
+.filter-btn{
+  padding:.6rem .9rem;border:1.5px solid var(--b);
+  border-radius:8px;font-size:.75rem;font-weight:700;
+  color:var(--muted);background:#fff;cursor:pointer;
+  font-family:'Cairo',sans-serif;transition:all .2s;white-space:nowrap;
+}
+.filter-btn.act{background:var(--g);color:#fff;border-color:var(--g)}
+
+/* ═══════════════ MODAL ═══════════════ */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,0.45);
+  z-index:1000;display:none;align-items:center;justify-content:center;
+  backdrop-filter:blur(3px);
+}
+.modal-backdrop.open{display:flex}
+.modal{
+  background:#fff;border-radius:18px;width:90%;max-width:560px;
+  max-height:88vh;overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,0.25);
+  animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.modal::-webkit-scrollbar{width:3px}
+.modal::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+.modal-head{
+  padding:1.3rem 1.5rem;border-bottom:1px solid var(--b2);
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:1;
+}
+.modal-head h3{font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800}
+.modal-close{
+  width:30px;height:30px;border-radius:50%;background:var(--off);
+  border:none;cursor:pointer;font-size:.9rem;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.modal-close:hover{background:var(--red);color:#fff}
+.modal-body{padding:1.4rem 1.5rem}
+.modal-foot{
+  padding:1rem 1.5rem;border-top:1px solid var(--b2);
+  display:flex;justify-content:flex-end;gap:.6rem;
+  position:sticky;bottom:0;background:#fff;
+}
+
+/* ═══════════════ CHART ═══════════════ */
+.chart-wrap{position:relative;height:200px;width:100%}
+.mini-bars{display:flex;align-items:flex-end;gap:4px;height:120px;padding-top:8px}
+.mini-bar{flex:1;border-radius:4px 4px 0 0;background:var(--g);opacity:.7;transition:opacity .2s;min-width:8px;cursor:pointer;position:relative}
+.mini-bar:hover{opacity:1}
+.mini-bar .tip{
+  position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);
+  background:var(--gd);color:#fff;font-size:.6rem;font-weight:700;
+  padding:.2rem .4rem;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.mini-bar:hover .tip{opacity:1}
+.bar-labels{display:flex;gap:4px;margin-top:4px}
+.bar-label{flex:1;text-align:center;font-size:.58rem;color:var(--faint);min-width:8px}
+
+/* ═══════════════ TIMELINE ═══════════════ */
+.timeline{display:flex;flex-direction:column;gap:.1rem}
+.tl-item{
+  display:flex;gap:.9rem;padding:.7rem 0;
+  border-bottom:1px solid var(--b2);
+}
+.tl-item:last-child{border-bottom:none}
+.tl-dot{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;flex-shrink:0;margin-top:.1rem;
+}
+.tl-dot.g{background:rgba(27,94,66,0.1);color:var(--g)}
+.tl-dot.r{background:rgba(198,40,40,0.08);color:var(--red)}
+.tl-dot.a{background:rgba(200,168,75,0.1);color:#8a6d00}
+.tl-dot.b{background:rgba(21,101,192,0.08);color:var(--blue)}
+.tl-action{font-size:.8rem;font-weight:600;color:var(--text)}
+.tl-time{font-size:.66rem;color:var(--faint);margin-top:.1rem}
+
+/* ═══════════════ DONUT ═══════════════ */
+.donut-wrap{display:flex;align-items:center;gap:1.2rem}
+.donut-legend{flex:1}
+.legend-item{display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem;font-size:.78rem}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.legend-label{color:var(--muted);flex:1}
+.legend-val{font-weight:800;color:var(--text)}
+.legend-pct{font-size:.68rem;color:var(--faint)}
+
+/* ═══════════════ USER ROW ═══════════════ */
+.urow{display:flex;align-items:center;gap:.8rem;padding:.6rem 0;border-bottom:1px solid var(--b2)}
+.urow:last-child{border-bottom:none}
+.u-av{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--g),var(--gl));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;font-weight:800;color:#fff;flex-shrink:0;
+}
+.u-name{font-size:.82rem;font-weight:700;color:var(--text)}
+.u-sub{font-size:.68rem;color:var(--faint);margin-top:.05rem}
+.u-right{margin-right:auto}
+
+/* ═══════════════ SETTINGS ═══════════════ */
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 0;border-bottom:1px solid var(--b2);
+}
+.setting-row:last-child{border-bottom:none}
+.setting-title{font-size:.84rem;font-weight:700;color:var(--text)}
+.setting-desc{font-size:.7rem;color:var(--muted);margin-top:.15rem}
+.toggle{
+  width:42px;height:24px;background:var(--b);border-radius:12px;
+  cursor:pointer;position:relative;transition:background .2s;flex-shrink:0;
+}
+.toggle.on{background:var(--g)}
+.toggle::after{
+  content:'';position:absolute;top:3px;right:3px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle.on::after{transform:translateX(-18px)}
+
+/* ═══════════════ TOAST ═══════════════ */
+.toast{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--gd);color:#fff;padding:.75rem 1.3rem;
+  border-radius:10px;font-size:.82rem;font-weight:600;
+  display:flex;align-items:center;gap:.6rem;z-index:9999;
+  box-shadow:0 8px 25px rgba(0,0,0,0.25);transition:transform .3s ease;
+  min-width:220px;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ═══════════════ EMPTY STATE ═══════════════ */
+.empty{
+  text-align:center;padding:3rem 2rem;
+  color:var(--faint);
+}
+.empty i{font-size:2.5rem;opacity:.3;margin-bottom:1rem;display:block}
+.empty p{font-size:.85rem}
+
+/* ═══════════════ INFO ROW ═══════════════ */
+.info-row{
+  display:flex;justify-content:space-between;
+  padding:.42rem 0;border-bottom:1px solid var(--b2);
+  font-size:.8rem;
+}
+.info-row:last-child{border-bottom:none}
+.ik{color:var(--muted)}
+.iv{font-weight:700;color:var(--text)}
+
+/* ═══════════════ DANGER ZONE ═══════════════ */
+.danger-box{
+  border:1.5px solid rgba(198,40,40,0.25);
+  border-radius:12px;padding:1.2rem;
+  background:rgba(198,40,40,0.03);
+  margin-top:1rem;
+}
+.danger-box h4{color:var(--red);font-size:.88rem;font-weight:800;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem}
+
+/* ═══════════════ SECTIONS ═══════════════ */
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1rem;
+}
+.section-title{font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text)}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:var(--faint)}
+
+/* ═══════════════ ACTIVITY FEED ═══════════════ */
+.act-feed{max-height:280px;overflow-y:auto}
+.act-feed::-webkit-scrollbar{width:3px}
+.act-feed::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+
+/* ═══════════════ ANNOUNCE CARD ═══════════════ */
+.ann-item{
+  padding:.85rem 1rem;border-radius:9px;
+  background:var(--surface);border:1px solid var(--b2);
+  margin-bottom:.6rem;display:flex;gap:.8rem;align-items:flex-start;
+}
+.ann-ico{
+  width:30px;height:30px;border-radius:7px;
+  background:rgba(27,94,66,0.1);color:var(--g);
+  display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0;
+}
+.ann-title{font-size:.82rem;font-weight:700;color:var(--text)}
+.ann-sub{font-size:.68rem;color:var(--faint);margin-top:.1rem}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SIDEBAR ═══════════════ -->
+<nav class="sb">
+  <div class="sb-brand">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg" class="sb-flag" alt="">
+    <span class="sb-logo">ORDO</span>
+    <span class="sb-admin-badge">ADMIN</span>
+  </div>
+
+  <div class="sb-admin-card">
+    <div class="sb-av">A</div>
+    <div class="sb-name">مدير النظام</div>
+    <div class="sb-role">SYSTEM_ADMIN · ROOT</div>
+  </div>
+
+  <div class="sb-nav">
+    <div class="ngl">الرئيسية</div>
+    <a class="ni act" onclick="showPage('overview',this)"><i class="fas fa-chart-pie"></i>نظرة عامة</a>
+    <a class="ni" onclick="showPage('analytics',this)"><i class="fas fa-chart-line"></i>إحصائيات متقدمة<span class="nbadge green">جديد</span></a>
+
+    <div class="ngl">إدارة البيانات</div>
+    <a class="ni" onclick="showPage('users',this)"><i class="fas fa-users"></i>المواطنون<span class="nbadge" id="nb-users">0</span></a>
+    <a class="ni" onclick="showPage('facilities',this)"><i class="fas fa-building"></i>المرافق<span class="nbadge green" id="nb-facs">0</span></a>
+    <a class="ni" onclick="showPage('appointments',this)"><i class="fas fa-calendar-check"></i>المواعيد<span class="nbadge" id="nb-appts">0</span></a>
+    <a class="ni" onclick="showPage('documents',this)"><i class="fas fa-file-alt"></i>الوثائق</a>
+
+    <div class="ngl">الإدارة</div>
+    <a class="ni" onclick="showPage('announcements',this)"><i class="fas fa-bullhorn"></i>الإعلانات</a>
+    <a class="ni" onclick="showPage('wilayas',this)"><i class="fas fa-map-marked-alt"></i>إدارة الولايات</a>
+    <a class="ni" onclick="showPage('logs',this)"><i class="fas fa-terminal"></i>سجل النشاطات</a>
+    <a class="ni" onclick="showPage('settings',this)"><i class="fas fa-cog"></i>إعدادات النظام</a>
+  </div>
+
+  <div class="sb-bot">
+    <button class="logout" onclick="adminLogout()">
+      <i class="fas fa-arrow-right-from-bracket"></i>تسجيل الخروج
+    </button>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<div class="main">
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="live-dot"></div>
+      <div>
+        <div class="tb-title" id="tb-title">نظرة عامة</div>
+        <div class="tb-sub" id="tb-sub">لوحة تحكم ORDO — الجمهورية الجزائرية</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <button class="tb-btn" onclick="exportData()"><i class="fas fa-download"></i>تصدير البيانات</button>
+      <button class="tb-btn" onclick="clearAll()"><i class="fas fa-trash"></i>مسح الكل</button>
+      <button class="tb-btn primary" onclick="showPage('settings',null)"><i class="fas fa-cog"></i>الإعدادات</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══ PAGE: OVERVIEW ═══ -->
+    <div class="page act" id="page-overview">
+      <!-- Stat Row -->
+      <div class="stats-row" id="stat-row"></div>
+
+      <div class="g31">
+        <!-- Chart -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-chart-bar"></i>المواعيد خلال آخر 7 أيام</h3>
+            <span class="mono" id="chart-total-label">0 موعد</span>
+          </div>
+          <div class="card-body">
+            <div class="mini-bars" id="week-chart"></div>
+            <div class="bar-labels" id="week-labels"></div>
+          </div>
+        </div>
+
+        <!-- Status Donut -->
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-circle-half-stroke"></i>حالة المواعيد</h3></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <div style="position:relative;width:90px;height:90px;flex-shrink:0">
+                <svg viewBox="0 0 36 36" style="transform:rotate(-90deg);width:100%;height:100%">
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#eee" stroke-width="3.8"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e65100" stroke-width="3.8" stroke-dasharray="100 0" id="donut-pnd" stroke-linecap="round"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#1b5e42" stroke-width="3.8" stroke-dasharray="0 100" id="donut-cnf" stroke-linecap="round"/>
+                  <circle cx="18" cy="18" r="15.9" fill="none" stroke="#c62828" stroke-width="3.8" stroke-dasharray="0 100" id="donut-rej" stroke-linecap="round"/>
+                </svg>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                  <div style="font-family:Tajawal,sans-serif;font-size:1.1rem;font-weight:900;color:var(--text)" id="donut-total">0</div>
+                  <div style="font-size:.55rem;color:var(--faint)">الكل</div>
+                </div>
+              </div>
+              <div class="donut-legend" id="donut-legend"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <!-- Recent Appointments -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-clock"></i>آخر المواعيد</h3>
+            <button class="act-btn g" onclick="showPage('appointments',null)">عرض الكل</button>
+          </div>
+          <div class="card-body" style="padding:0">
+            <div class="tbl-wrap">
+              <table id="recent-appts-tbl">
+                <thead><tr><th>المواطن</th><th>الخدمة</th><th>التاريخ</th><th>الحالة</th></tr></thead>
+                <tbody id="recent-appts-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-bolt"></i>النشاط الأخير</h3></div>
+          <div class="card-body" style="padding:.6rem 1.2rem">
+            <div class="act-feed" id="activity-feed"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="g2">
+        <!-- Top Wilayas -->
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-map-marker-alt"></i>أكثر الولايات نشاطاً</h3></div>
+          <div class="card-body" id="wilaya-stats"></div>
+        </div>
+
+        <!-- Top Services -->
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-star"></i>أكثر الخدمات طلباً</h3></div>
+          <div class="card-body" id="svc-stats"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: ANALYTICS ═══ -->
+    <div class="page" id="page-analytics">
+      <div class="stats-row" id="stat-row-2"></div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-users"></i>توزيع المواطنين حسب الولاية</h3></div>
+          <div class="card-body" id="analytics-wilayas"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-building"></i>توزيع المرافق حسب النوع</h3></div>
+          <div class="card-body" id="analytics-fac-types"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3><i class="fas fa-calendar"></i>المواعيد حسب الشهر</h3></div>
+        <div class="card-body" id="analytics-monthly"></div>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-clock"></i>أكثر أوقات الحجز شعبية</h3></div>
+          <div class="card-body" id="analytics-times"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-bullseye"></i>نسبة إكمال المواعيد</h3></div>
+          <div class="card-body" id="analytics-completion"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: USERS ═══ -->
+    <div class="page" id="page-users">
+      <div class="search-row">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input class="search-input" id="user-search" placeholder="بحث باسم أو رقم التعريف أو الولاية..." oninput="renderUsers()">
+        </div>
+        <button class="filter-btn act" onclick="setUserFilter('all',this)">الكل</button>
+        <button class="filter-btn" onclick="setUserFilter('active',this)">نشط</button>
+        <button class="filter-btn" onclick="setUserFilter('suspended',this)">موقوف</button>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="fas fa-users"></i>قائمة المواطنين</h3>
+          <span class="mono" id="users-count-lbl">0 مستخدم</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المستخدم</th><th>رقم التعريف</th><th>الولاية</th>
+                <th>الهاتف</th><th>تاريخ التسجيل</th><th>الحالة</th><th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="users-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: FACILITIES ═══ -->
+    <div class="page" id="page-facilities">
+      <div class="search-row">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input class="search-input" id="fac-search" placeholder="بحث باسم أو نوع أو ولاية..." oninput="renderFacilities()">
+        </div>
+        <button class="filter-btn act" onclick="setFacFilter('all',this)">الكل</button>
+        <button class="filter-btn" onclick="setFacFilter('بلدية',this)">بلدية</button>
+        <button class="filter-btn" onclick="setFacFilter('سونلغاز',this)">سونلغاز</button>
+        <button class="filter-btn" onclick="setFacFilter('محكمة',this)">محكمة</button>
+        <button class="tb-btn primary" style="flex-shrink:0" onclick="openAddFacModal()"><i class="fas fa-plus"></i>إضافة مرفق</button>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="fas fa-building"></i>المرافق المسجلة</h3>
+          <span class="mono" id="facs-count-lbl">0 مرفق</span>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المرفق</th><th>النوع</th><th>الولاية</th>
+                <th>الهاتف</th><th>ساعات العمل</th><th>الحالة</th><th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="facs-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: APPOINTMENTS ═══ -->
+    <div class="page" id="page-appointments">
+      <div class="search-row">
+        <div class="search-wrap">
+          <i class="fas fa-search"></i>
+          <input class="search-input" id="appt-search" placeholder="بحث برقم المرجع أو الاسم أو الخدمة..." oninput="renderAppts()">
+        </div>
+        <button class="filter-btn act" onclick="setApptFilter('all',this)">الكل</button>
+        <button class="filter-btn" onclick="setApptFilter('pending',this)">انتظار</button>
+        <button class="filter-btn" onclick="setApptFilter('confirmed',this)">مؤكدة</button>
+        <button class="filter-btn" onclick="setApptFilter('cancelled',this)">ملغاة</button>
+        <button class="filter-btn" onclick="setApptFilter('rejected',this)">مرفوضة</button>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="fas fa-calendar-check"></i>جميع المواعيد</h3>
+          <div style="display:flex;gap:.5rem">
+            <button class="act-btn g" onclick="bulkConfirm()"><i class="fas fa-check-double"></i>تأكيد كل الانتظار</button>
+            <span class="mono" id="appts-count-lbl">0 موعد</span>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>المرجع</th><th>المواطن</th><th>الخدمة</th>
+                <th>الفرع</th><th>التاريخ</th><th>الوقت</th><th>الحالة</th><th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="appts-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: DOCUMENTS ═══ -->
+    <div class="page" id="page-documents">
+      <div class="card">
+        <div class="card-head"><h3><i class="fas fa-file-alt"></i>طلبات الوثائق</h3></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>المرجع</th><th>المواطن</th><th>النوع</th><th>الغرض</th><th>النسخ</th><th>تاريخ الطلب</th><th>الحالة</th><th>إجراءات</th></tr>
+            </thead>
+            <tbody id="docs-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: ANNOUNCEMENTS ═══ -->
+    <div class="page" id="page-announcements">
+      <div class="g2">
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-plus-circle"></i>إنشاء إعلان جديد</h3></div>
+          <div class="card-body">
+            <div class="fg"><label>عنوان الإعلان</label><input class="field" id="ann-title" placeholder="عنوان واضح ومختصر..."></div>
+            <div class="fg"><label>نص الإعلان</label><textarea class="field" id="ann-body" style="height:100px;resize:none" placeholder="تفاصيل الإعلان..."></textarea></div>
+            <div class="frow">
+              <div class="fg"><label>نوع الإعلان</label>
+                <select class="field" id="ann-type">
+                  <option value="info">معلومات عامة</option>
+                  <option value="warning">تحذير</option>
+                  <option value="success">إشعار إيجابي</option>
+                  <option value="urgent">عاجل</option>
+                </select>
+              </div>
+              <div class="fg"><label>الجمهور المستهدف</label>
+                <select class="field" id="ann-target">
+                  <option value="all">الجميع</option>
+                  <option value="citizens">المواطنون فقط</option>
+                  <option value="facilities">المرافق فقط</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn" onclick="publishAnnouncement()"><i class="fas fa-paper-plane"></i>نشر الإعلان</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-list"></i>الإعلانات المنشورة</h3>
+            <button class="act-btn r" onclick="clearAnnouncements()"><i class="fas fa-trash"></i>مسح الكل</button>
+          </div>
+          <div class="card-body" id="ann-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: WILAYAS ═══ -->
+    <div class="page" id="page-wilayas">
+      <div class="card">
+        <div class="card-head"><h3><i class="fas fa-map-marked-alt"></i>إحصائيات الولايات</h3></div>
+        <div class="card-body">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>الولاية</th><th>المواطنون</th><th>المرافق</th><th>المواعيد</th><th>نسبة النشاط</th></tr></thead>
+              <tbody id="wilaya-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: LOGS ═══ -->
+    <div class="page" id="page-logs">
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="fas fa-terminal"></i>سجل نشاطات النظام</h3>
+          <button class="act-btn r" onclick="clearLogs()"><i class="fas fa-trash"></i>مسح السجل</button>
+        </div>
+        <div class="card-body" style="padding:0">
+          <div id="logs-container" style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;padding:1rem;max-height:520px;overflow-y:auto;background:#0d1f18;border-radius:0 0 var(--radius) var(--radius);line-height:2">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PAGE: SETTINGS ═══ -->
+    <div class="page" id="page-settings">
+      <div class="g2">
+        <!-- General Settings -->
+        <div>
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-sliders"></i>إعدادات عامة</h3></div>
+            <div class="card-body">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-title">وضع الصيانة</div>
+                  <div class="setting-desc">إيقاف الوصول للمستخدمين مؤقتاً</div>
+                </div>
+                <div class="toggle" id="toggle-maintenance" onclick="toggleSetting('maintenance',this)"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-title">السماح بالتسجيل الجديد</div>
+                  <div class="setting-desc">السماح للمواطنين والمرافق بالتسجيل</div>
+                </div>
+                <div class="toggle on" id="toggle-registration" onclick="toggleSetting('registration',this)"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-title">التحقق التلقائي من المرافق</div>
+                  <div class="setting-desc">قبول المرافق تلقائياً عند التسجيل</div>
+                </div>
+                <div class="toggle" id="toggle-autoverify" onclick="toggleSetting('autoverify',this)"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-title">إشعارات البريد الإلكتروني</div>
+                  <div class="setting-desc">إرسال إشعارات للمستخدمين</div>
+                </div>
+                <div class="toggle on" id="toggle-emails" onclick="toggleSetting('emails',this)"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <div class="setting-title">تسجيل كل النشاطات</div>
+                  <div class="setting-desc">حفظ كامل لسجل العمليات</div>
+                </div>
+                <div class="toggle on" id="toggle-logging" onclick="toggleSetting('logging',this)"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-lock"></i>تغيير كلمة مرور الأدمن</h3></div>
+            <div class="card-body">
+              <div class="fg"><label>كلمة المرور الحالية</label><input type="password" class="field" id="old-pw" placeholder="••••••••"></div>
+              <div class="fg"><label>كلمة المرور الجديدة</label><input type="password" class="field" id="new-pw" placeholder="••••••••"></div>
+              <div class="fg"><label>تأكيد كلمة المرور</label><input type="password" class="field" id="conf-pw" placeholder="••••••••"></div>
+              <button class="btn sm" onclick="changeAdminPw()"><i class="fas fa-key"></i>تحديث كلمة المرور</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Info + Danger Zone -->
+        <div>
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-server"></i>معلومات النظام</h3></div>
+            <div class="card-body" id="sys-info"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-database"></i>إدارة البيانات</h3></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:.6rem">
+                <button class="btn out sm" onclick="exportData()"><i class="fas fa-download"></i>تصدير كل البيانات (JSON)</button>
+                <button class="btn out sm" onclick="backupData()"><i class="fas fa-cloud-arrow-up"></i>نسخ احتياطي</button>
+                <button class="btn out sm" onclick="seedDemoData()"><i class="fas fa-flask"></i>توليد بيانات تجريبية</button>
+              </div>
+              <div class="danger-box">
+                <h4><i class="fas fa-skull-crossbones"></i>منطقة الخطر</h4>
+                <div style="display:flex;flex-direction:column;gap:.5rem">
+                  <button class="btn red sm" onclick="clearUsers()"><i class="fas fa-user-slash"></i>حذف كل المستخدمين</button>
+                  <button class="btn red sm" onclick="clearFacilities()"><i class="fas fa-building-circle-xmark"></i>حذف كل المرافق</button>
+                  <button class="btn red sm" onclick="clearAppointments()"><i class="fas fa-calendar-xmark"></i>حذف كل المواعيد</button>
+                  <button class="btn red sm" onclick="clearAll()"><i class="fas fa-fire"></i>مسح كل البيانات</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- User Detail Modal -->
+<div class="modal-backdrop" id="modal-user">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fas fa-user" style="color:var(--g);margin-left:.4rem"></i>تفاصيل المستخدم</h3>
+      <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-user-body"></div>
+    <div class="modal-foot" id="modal-user-foot"></div>
+  </div>
+</div>
+
+<!-- Facility Detail Modal -->
+<div class="modal-backdrop" id="modal-fac">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fas fa-building" style="color:var(--g);margin-left:.4rem"></i>تفاصيل المرفق</h3>
+      <button class="modal-close" onclick="closeModal('modal-fac')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-fac-body"></div>
+    <div class="modal-foot" id="modal-fac-foot"></div>
+  </div>
+</div>
+
+<!-- Appointment Detail Modal -->
+<div class="modal-backdrop" id="modal-appt">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fas fa-calendar" style="color:var(--g);margin-left:.4rem"></i>تفاصيل الموعد</h3>
+      <button class="modal-close" onclick="closeModal('modal-appt')">✕</button>
+    </div>
+    <div class="modal-body" id="modal-appt-body"></div>
+    <div class="modal-foot" id="modal-appt-foot"></div>
+  </div>
+</div>
+
+<!-- Add Facility Modal -->
+<div class="modal-backdrop" id="modal-add-fac">
+  <div class="modal">
+    <div class="modal-head">
+      <h3><i class="fas fa-plus" style="color:var(--g);margin-left:.4rem"></i>إضافة مرفق جديد</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-fac')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="frow">
+        <div class="fg"><label>نوع المرفق <span style="color:var(--red)">*</span></label>
+          <select class="field" id="af-type">
+            <option value="">-- اختر --</option>
+            <option>بلدية</option><option>ولاية</option><option>دائرة</option>
+            <option>سونلغاز</option><option>نسار</option><option>محكمة</option>
+            <option>بريد الجزائر</option><option>موثق</option><option>محامي</option>
+            <option>مستشفى</option><option>مدرسة</option><option>جامعة</option>
+          </select>
+        </div>
+        <div class="fg"><label>الولاية <span style="color:var(--red)">*</span></label>
+          <select class="field" id="af-wil">
+            <option value="">-- اختر --</option>
+            <option>الجزائر</option><option>وهران</option><option>قسنطينة</option>
+            <option>عنابة</option><option>بجاية</option><option>تيزي وزو</option>
+            <option>بومرداس</option><option>المدية</option><option>تيارت</option>
+            <option>سطيف</option><option>سيدي بلعباس</option><option>باتنة</option>
+            <option>بسكرة</option><option>تلمسان</option><option>مستغانم</option>
+            <option>ورقلة</option><option>أدرار</option><option>الأغواط</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>اسم المرفق <span style="color:var(--red)">*</span></label>
+        <input class="field" id="af-name" placeholder="مثال: بلدية حيدرة المركز">
+      </div>
+      <div class="fg"><label>العنوان</label>
+        <input class="field" id="af-addr" placeholder="العنوان الكامل...">
+      </div>
+      <div class="frow">
+        <div class="fg"><label>البريد الإلكتروني <span style="color:var(--red)">*</span></label>
+          <input class="field" id="af-email" type="email" placeholder="facility@gov.dz">
+        </div>
+        <div class="fg"><label>الهاتف</label>
+          <input class="field" id="af-phone" placeholder="023 XX XX XX">
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>بداية العمل</label>
+          <input class="field" id="af-from" type="time" value="08:00">
+        </div>
+        <div class="fg"><label>نهاية العمل</label>
+          <input class="field" id="af-to" type="time" value="16:30">
+        </div>
+      </div>
+      <div class="fg"><label>كلمة المرور الأولية <span style="color:var(--red)">*</span></label>
+        <input class="field" id="af-pw" type="password" placeholder="••••••••">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn out sm" onclick="closeModal('modal-add-fac')">إلغاء</button>
+      <button class="btn sm" onclick="addFacility()"><i class="fas fa-plus"></i>إضافة المرفق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fas fa-circle-check" id="toast-ico"></i><span id="toast-msg"></span></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// ADMIN AUTHENTICATION
+// ═══════════════════════════════════════════════════════════════════
+var ADMIN_PW_KEY   = 'ordo_admin_pw';
+var ADMIN_USER_KEY = 'ordo_admin_user';
+var ADMIN_SESS     = 'ordo_admin_sess';
+var LOGS_KEY       = 'ordo_admin_logs';
+var ANN_KEY        = 'ordo_announcements';
+var SETTINGS_KEY   = 'ordo_settings';
+
+var DEFAULT_USER = 'admin';
+var DEFAULT_PW   = 'admin1234';
+
+/* ── واجهة تسجيل الدخول ── */
+function showAdminLogin(errMsg){
+  var old = document.getElementById('__admin_login');
+  if(old) old.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id  = '__admin_login';
+  overlay.style.cssText = [
+    'position:fixed;inset:0;z-index:99999;',
+    'background:linear-gradient(135deg,#0a2518 0%,#0d3324 40%,#133d2c 100%);',
+    'display:flex;align-items:center;justify-content:center;',
+    'font-family:Cairo,Tajawal,sans-serif;direction:rtl;'
+  ].join('');
+
+  overlay.innerHTML = [
+    /* ── خلفية زخرفية ── */
+    '<div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">',
+      '<div style="position:absolute;width:600px;height:600px;border-radius:50%;',
+        'border:1px solid rgba(200,168,75,0.06);top:-200px;right:-200px"></div>',
+      '<div style="position:absolute;width:400px;height:400px;border-radius:50%;',
+        'border:1px solid rgba(200,168,75,0.04);bottom:-100px;left:-100px"></div>',
+      '<div style="position:absolute;width:200px;height:200px;border-radius:50%;',
+        'border:1px solid rgba(255,255,255,0.03);bottom:100px;right:80px"></div>',
+    '</div>',
+
+    /* ── البطاقة ── */
+    '<div id="__login_card" style="',
+      'position:relative;z-index:1;',
+      'background:rgba(255,255,255,0.04);',
+      'border:1px solid rgba(255,255,255,0.08);',
+      'border-radius:24px;padding:2.8rem 2.4rem;width:100%;max-width:420px;',
+      'backdrop-filter:blur(20px);',
+      'box-shadow:0 40px 80px rgba(0,0,0,0.5);',
+      'animation:__loginIn .45s cubic-bezier(.34,1.56,.64,1);',
+    '">',
+
+      /* شعار */
+      '<div style="text-align:center;margin-bottom:2rem">',
+        '<div style="display:inline-flex;align-items:center;gap:.7rem;',
+          'background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);',
+          'border-radius:50px;padding:.5rem 1.2rem;margin-bottom:1.4rem">',
+          '<img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg" ',
+            'style="width:22px;height:15px;border-radius:3px;object-fit:cover" alt="">',
+          '<span style="font-family:Tajawal,sans-serif;font-size:1.2rem;font-weight:900;',
+            'color:#fff;letter-spacing:4px">ORDO</span>',
+          '<span style="font-size:.52rem;font-weight:800;background:linear-gradient(135deg,#c8a84b,#e8c56a);',
+            'color:#1a0e00;padding:.18rem .55rem;border-radius:4px;letter-spacing:1px">ADMIN</span>',
+        '</div>',
+        '<div style="font-family:Tajawal,sans-serif;font-size:1.35rem;font-weight:800;color:#fff;margin-bottom:.3rem">',
+          'لوحة الإدارة</div>',
+        '<div style="font-size:.78rem;color:rgba(255,255,255,0.4)">',
+          'أدخل بيانات الدخول للمتابعة</div>',
+      '</div>',
+
+      /* رسالة خطأ */
+      '<div id="__login_err" style="',
+        'display:'+(errMsg?'flex':'none')+';align-items:center;gap:.6rem;',
+        'background:rgba(198,40,40,0.12);border:1px solid rgba(198,40,40,0.25);',
+        'border-radius:10px;padding:.75rem 1rem;margin-bottom:1.2rem;',
+        'font-size:.8rem;color:#ff6b6b;',
+      '">',
+        '<i class="fas fa-circle-xmark" style="flex-shrink:0"></i>',
+        '<span>'+(errMsg||'')+'</span>',
+      '</div>',
+
+      /* حقل اليوزر */
+      '<div style="margin-bottom:1rem">',
+        '<label style="display:block;font-size:.72rem;font-weight:700;',
+          'color:rgba(255,255,255,0.5);margin-bottom:.4rem;letter-spacing:.5px">',
+          'اسم المستخدم</label>',
+        '<div style="position:relative">',
+          '<i class="fas fa-user" style="position:absolute;right:.95rem;top:50%;',
+            'transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:.82rem;pointer-events:none"></i>',
+          '<input id="__adm_user" type="text" placeholder="admin" autocomplete="username"',
+            'style="width:100%;padding:.85rem .85rem .85rem 1rem;padding-right:2.8rem;',
+            'background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);',
+            'border-radius:11px;color:#fff;font-family:Cairo,sans-serif;font-size:.88rem;',
+            'outline:none;transition:border .2s,background .2s;"',
+            'onfocus="this.style.borderColor=\'rgba(200,168,75,0.6)\';this.style.background=\'rgba(255,255,255,0.09)\'"',
+            'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\';this.style.background=\'rgba(255,255,255,0.06)\'"',
+            'onkeydown="if(event.key===\'Enter\')document.getElementById(\'__adm_pw\').focus()">',
+        '</div>',
+      '</div>',
+
+      /* حقل كلمة المرور */
+      '<div style="margin-bottom:1.6rem">',
+        '<label style="display:block;font-size:.72rem;font-weight:700;',
+          'color:rgba(255,255,255,0.5);margin-bottom:.4rem;letter-spacing:.5px">',
+          'كلمة المرور</label>',
+        '<div style="position:relative">',
+          '<i class="fas fa-lock" style="position:absolute;right:.95rem;top:50%;',
+            'transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:.82rem;pointer-events:none"></i>',
+          '<input id="__adm_pw" type="password" placeholder="••••••••" autocomplete="current-password"',
+            'style="width:100%;padding:.85rem 2.8rem .85rem 2.8rem;',
+            'background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);',
+            'border-radius:11px;color:#fff;font-family:Cairo,sans-serif;font-size:.88rem;',
+            'outline:none;transition:border .2s,background .2s;"',
+            'onfocus="this.style.borderColor=\'rgba(200,168,75,0.6)\';this.style.background=\'rgba(255,255,255,0.09)\'"',
+            'onblur="this.style.borderColor=\'rgba(255,255,255,0.1)\';this.style.background=\'rgba(255,255,255,0.06)\'"',
+            'onkeydown="if(event.key===\'Enter\')doAdminLogin()">',
+          '<i id="__adm_eye" class="fas fa-eye" style="position:absolute;left:.95rem;top:50%;',
+            'transform:translateY(-50%);color:rgba(255,255,255,0.3);font-size:.8rem;cursor:pointer"',
+            'onclick="var f=document.getElementById(\'__adm_pw\');',
+              'f.type=f.type===\'password\'?\'text\':\'password\';',
+              'this.classList.toggle(\'fa-eye\');this.classList.toggle(\'fa-eye-slash\')">',
+          '</i>',
+        '</div>',
+      '</div>',
+
+      /* زر الدخول */
+      '<button id="__adm_btn" onclick="doAdminLogin()" style="',
+        'width:100%;padding:.95rem;',
+        'background:linear-gradient(135deg,#c8a84b,#e8c56a);',
+        'color:#1a0e00;border:none;border-radius:11px;',
+        'font-family:Cairo,sans-serif;font-size:.95rem;font-weight:800;',
+        'cursor:pointer;transition:all .2s;',
+        'display:flex;align-items:center;justify-content:center;gap:.6rem;',
+        'box-shadow:0 6px 20px rgba(200,168,75,0.25);"',
+        'onmouseover="this.style.transform=\'translateY(-2px)\';this.style.boxShadow=\'0 10px 28px rgba(200,168,75,0.35)\'"',
+        'onmouseout="this.style.transform=\'\';this.style.boxShadow=\'0 6px 20px rgba(200,168,75,0.25)\'"',
+      '>',
+        '<i class="fas fa-arrow-left"></i>دخول إلى لوحة الإدارة',
+      '</button>',
+
+      /* رابط الرجوع */
+      '<div style="text-align:center;margin-top:1.4rem">',
+        '<a href="index.html" style="font-size:.74rem;color:rgba(255,255,255,0.28);',
+          'text-decoration:none;transition:color .18s;display:inline-flex;align-items:center;gap:.4rem"',
+          'onmouseover="this.style.color=\'rgba(255,255,255,0.55)\'"',
+          'onmouseout="this.style.color=\'rgba(255,255,255,0.28)\'"',
+        '>',
+          '<i class="fas fa-arrow-right"></i>العودة إلى الرئيسية',
+        '</a>',
+      '</div>',
+
+    '</div>',
+
+    /* keyframe */
+    '<style>',
+      '@keyframes __loginIn{from{transform:translateY(30px) scale(.97);opacity:0}',
+        'to{transform:translateY(0) scale(1);opacity:1}}',
+      '#__adm_user::placeholder,#__adm_pw::placeholder{color:rgba(255,255,255,0.2)}',
+    '</style>',
+  ].join('');
+
+  document.body.appendChild(overlay);
+
+  /* focus أول حقل */
+  setTimeout(function(){
+    var u = document.getElementById('__adm_user');
+    if(u) u.focus();
+  }, 120);
+}
+
+function doAdminLogin(){
+  var user   = (document.getElementById('__adm_user')||{}).value || '';
+  var pw     = (document.getElementById('__adm_pw')||{}).value   || '';
+  var btn    = document.getElementById('__adm_btn');
+
+  var storedUser = localStorage.getItem(ADMIN_USER_KEY) || DEFAULT_USER;
+  var storedPw   = localStorage.getItem(ADMIN_PW_KEY)   || DEFAULT_PW;
+
+  /* تأثير loading */
+  if(btn){
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>جاري التحقق...';
+    btn.style.opacity = '.8';
+  }
+
+  setTimeout(function(){
+    if(user === storedUser && pw === storedPw){
+      /* ✅ ناجح */
+      sessionStorage.setItem(ADMIN_SESS, 'yes');
+      var overlay = document.getElementById('__admin_login');
+      if(overlay){
+        overlay.style.transition = 'opacity .4s';
+        overlay.style.opacity    = '0';
+        setTimeout(function(){ overlay.remove(); }, 400);
+      }
+      addLog('تسجيل دخول ناجح للمدير', 'success');
+    } else {
+      /* ❌ خطأ */
+      showAdminLogin(
+        user !== storedUser
+          ? 'اسم المستخدم غير صحيح'
+          : 'كلمة المرور غير صحيحة'
+      );
+    }
+  }, 600);
+}
+
+/* ── فحص الجلسة عند التحميل ── */
+(function checkAuth(){
+  var sess = sessionStorage.getItem(ADMIN_SESS);
+  if(sess === 'yes') return;
+  showAdminLogin();
+})();
+
+// ═══════════════════════════════════════════════════════════════════
+// DATA HELPERS
+// ═══════════════════════════════════════════════════════════════════
+function getUsers()    { return JSON.parse(localStorage.getItem('ordo_users')      || '[]'); }
+function getFacs()     { return JSON.parse(localStorage.getItem('ordo_facilities') || '[]'); }
+function getAppts()    { return JSON.parse(localStorage.getItem('ordo_appts')      || '[]'); }
+function getDocs()     { return JSON.parse(localStorage.getItem('ordo_docs_list')  || '[]'); }
+function getSettings() { return JSON.parse(localStorage.getItem(SETTINGS_KEY)      || '{}'); }
+function getLogs()     { return JSON.parse(localStorage.getItem(LOGS_KEY)          || '[]'); }
+function getAnns()     { return JSON.parse(localStorage.getItem(ANN_KEY)           || '[]'); }
+
+function saveUsers(d)  { localStorage.setItem('ordo_users',      JSON.stringify(d)); }
+function saveFacs(d)   { localStorage.setItem('ordo_facilities',  JSON.stringify(d)); }
+function saveAppts(d)  { localStorage.setItem('ordo_appts',       JSON.stringify(d)); }
+function saveDocs(d)   { localStorage.setItem('ordo_docs_list',   JSON.stringify(d)); }
+function saveSettings(d){ localStorage.setItem(SETTINGS_KEY,      JSON.stringify(d)); }
+
+// Filters state
+var userFilter  = 'all';
+var facFilter   = 'all';
+var apptFilter  = 'all';
+
+// ═══════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════
+function gv(id){ return (document.getElementById(id)||{}).value||''; }
+function setText(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+
+function toast(msg, type){
+  var t = document.getElementById('toast');
+  var ico = document.getElementById('toast-ico');
+  document.getElementById('toast-msg').textContent = msg;
+  t.style.background = type==='err' ? '#c62828' : type==='warn' ? '#e65100' : '#1b5e42';
+  ico.className = type==='err' ? 'fas fa-circle-xmark' : 'fas fa-circle-check';
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+function confirm2(msg){ return confirm(msg); }
+
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+}
+
+var PAGE_TITLES = {
+  overview:'نظرة عامة', analytics:'إحصائيات متقدمة',
+  users:'إدارة المواطنين', facilities:'إدارة المرافق',
+  appointments:'إدارة المواعيد', documents:'طلبات الوثائق',
+  announcements:'الإعلانات', wilayas:'إدارة الولايات',
+  logs:'سجل النشاطات', settings:'إعدادات النظام'
+};
+
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('act'); });
+  var pg = document.getElementById('page-'+name);
+  if(pg) pg.classList.add('act');
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('act'); });
+  if(el) el.classList.add('act');
+  setText('tb-title', PAGE_TITLES[name]||name);
+  renderPage(name);
+}
+
+function renderPage(name){
+  if(name==='overview')     renderOverview();
+  if(name==='analytics')    renderAnalytics();
+  if(name==='users')        renderUsers();
+  if(name==='facilities')   renderFacilities();
+  if(name==='appointments') renderAppts();
+  if(name==='documents')    renderDocs();
+  if(name==='announcements')renderAnnouncements();
+  if(name==='wilayas')      renderWilayas();
+  if(name==='logs')         renderLogs();
+  if(name==='settings')     renderSettings();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LOGGING
+// ═══════════════════════════════════════════════════════════════════
+function addLog(msg, type){
+  var logs = getLogs();
+  logs.unshift({
+    msg: msg, type: type||'info',
+    time: new Date().toLocaleString('ar-DZ'),
+    ts: Date.now()
+  });
+  if(logs.length > 200) logs = logs.slice(0,200);
+  localStorage.setItem(LOGS_KEY, JSON.stringify(logs));
+}
+
+function renderLogs(){
+  var logs = getLogs();
+  var colors = { success:'#22c55e', error:'#f87171', warning:'#fb923c', info:'#60a5fa' };
+  var el = document.getElementById('logs-container');
+  if(!logs.length){
+    el.innerHTML = '<span style="color:#4d6b5c">// لا توجد سجلات حتى الآن</span>';
+    return;
+  }
+  el.innerHTML = logs.map(function(l){
+    var c = colors[l.type]||'#60a5fa';
+    return '<div style="margin-bottom:.1rem">'
+      +'<span style="color:#4d6b5c">['+l.time+']</span> '
+      +'<span style="color:'+c+'">'+l.msg+'</span>'
+      +'</div>';
+  }).join('');
+}
+
+function clearLogs(){
+  if(!confirm2('مسح سجل النشاطات؟')) return;
+  localStorage.setItem(LOGS_KEY, '[]');
+  addLog('تم مسح السجل من قِبل المدير','warning');
+  renderLogs();
+  toast('تم مسح السجل','warn');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// OVERVIEW
+// ═══════════════════════════════════════════════════════════════════
+function renderOverview(){
+  var users  = getUsers();
+  var facs   = getFacs();
+  var appts  = getAppts();
+  var docs   = getDocs();
+
+  var pending   = appts.filter(function(a){ return a.status==='pending'; }).length;
+  var confirmed = appts.filter(function(a){ return a.status==='confirmed'; }).length;
+
+  // Update sidebar badges
+  setText('nb-users', users.length);
+  setText('nb-facs',  facs.length);
+  setText('nb-appts', pending);
+
+  // Stat cards
+  var statsData = [
+    {cls:'g', ico:'fas fa-users',          val:users.length,   lbl:'مواطنون مسجلون',  delta:'+'+users.length+' إجمالي'},
+    {cls:'a', ico:'fas fa-building',        val:facs.length,    lbl:'مرافق نشطة',     delta:'موزعة على الولايات'},
+    {cls:'r', ico:'fas fa-hourglass-half',  val:pending,        lbl:'مواعيد انتظار',  delta:'تحتاج موافقة المرافق'},
+    {cls:'b', ico:'fas fa-calendar-check',  val:appts.length,   lbl:'إجمالي المواعيد',delta:confirmed+' مؤكد'}
+  ];
+  document.getElementById('stat-row').innerHTML = statsData.map(function(s){
+    return '<div class="stat '+s.cls+'" style="cursor:default">'
+      +'<div class="stat-ico"><i class="'+s.ico+'"></i></div>'
+      +'<div class="stat-val">'+s.val+'</div>'
+      +'<div class="stat-lbl">'+s.lbl+'</div>'
+      +'<div class="stat-delta">'+s.delta+'</div>'
+      +'</div>';
+  }).join('');
+
+  // Week chart
+  renderWeekChart(appts);
+
+  // Donut
+  renderDonut(appts);
+
+  // Recent appointments (last 5)
+  var recent = appts.slice(-5).reverse();
+  var sMap = {pending:'<span class="bdg pnd">انتظار</span>',confirmed:'<span class="bdg cnf">مؤكد</span>',rejected:'<span class="bdg cnl">مرفوض</span>',cancelled:'<span class="bdg cnl">ملغى</span>'};
+  document.getElementById('recent-appts-body').innerHTML = recent.length
+    ? recent.map(function(a){
+        return '<tr>'
+          +'<td><strong>'+a.userName+'</strong></td>'
+          +'<td>'+a.type+'</td>'
+          +'<td style="font-family:IBM Plex Mono,monospace;font-size:.73rem">'+a.date+'</td>'
+          +'<td>'+(sMap[a.status]||a.status)+'</td>'
+          +'</tr>';
+      }).join('')
+    : '<tr><td colspan="4" style="text-align:center;color:var(--faint);padding:1.5rem">لا توجد مواعيد</td></tr>';
+
+  // Activity feed
+  var logs = getLogs().slice(0,8);
+  var icoMap = {success:'fas fa-check','error':'fas fa-xmark',warning:'fas fa-triangle-exclamation',info:'fas fa-info'};
+  var clsMap = {success:'g','error':'r',warning:'a',info:'b'};
+  document.getElementById('activity-feed').innerHTML = logs.length
+    ? logs.map(function(l){
+        return '<div class="tl-item">'
+          +'<div class="tl-dot '+(clsMap[l.type]||'b')+'"><i class="'+(icoMap[l.type]||'fas fa-info')+'"></i></div>'
+          +'<div class="tl-content"><div class="tl-action">'+l.msg+'</div><div class="tl-time">'+l.time+'</div></div>'
+          +'</div>';
+      }).join('')
+    : '<div class="empty"><i class="fas fa-history"></i><p>لا توجد نشاطات بعد</p></div>';
+
+  // Wilaya stats
+  renderTopStat('wilaya-stats', groupBy(appts,'wilaya'), 'ولاية', '#1b5e42');
+  renderTopStat('svc-stats',    groupBy(appts,'type'),   'خدمة',  '#c8a84b');
+}
+
+function groupBy(arr, key){
+  var r = {};
+  arr.forEach(function(a){ var k=a[key]||'—'; r[k]=(r[k]||0)+1; });
+  return r;
+}
+
+function renderTopStat(elId, obj, label, color){
+  var items = Object.keys(obj).map(function(k){ return {name:k,count:obj[k]}; });
+  items.sort(function(a,b){ return b.count-a.count; });
+  items = items.slice(0,5);
+  var max = items[0]?items[0].count:1;
+  var el = document.getElementById(elId);
+  if(!items.length){ el.innerHTML='<div class="empty" style="padding:1rem"><p>لا توجد بيانات</p></div>'; return; }
+  el.innerHTML = items.map(function(it){
+    var pct = Math.round(it.count/max*100);
+    return '<div style="margin-bottom:.8rem">'
+      +'<div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.3rem">'
+      +'<span style="font-weight:600">'+it.name+'</span>'
+      +'<span style="color:var(--faint)">'+it.count+' '+label+'</span>'
+      +'</div>'
+      +'<div style="height:6px;background:var(--b2);border-radius:3px;overflow:hidden">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:3px;transition:width .5s"></div>'
+      +'</div></div>';
+  }).join('');
+}
+
+function renderWeekChart(appts){
+  var days = ['أحد','اثن','ثلا','أرب','خمي','جمع','سبت'];
+  var counts = [0,0,0,0,0,0,0];
+  var labels = [];
+  var today = new Date();
+  for(var i=6;i>=0;i--){
+    var d = new Date(today);
+    d.setDate(today.getDate()-i);
+    var ds = d.getFullYear()+'-'+(d.getMonth()<9?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();
+    var cnt = appts.filter(function(a){ return a.date===ds; }).length;
+    counts[6-i] = cnt;
+    labels.push(days[d.getDay()]);
+  }
+  var max = Math.max.apply(null, counts) || 1;
+  setText('chart-total-label', counts.reduce(function(a,b){return a+b;},0)+' موعد');
+  document.getElementById('week-chart').innerHTML = counts.map(function(c,i){
+    var h = Math.max(4, Math.round(c/max*100));
+    return '<div class="mini-bar" style="height:'+h+'%;background:'+(i===6?'var(--accent)':'var(--g)')+'"><div class="tip">'+c+'</div></div>';
+  }).join('');
+  document.getElementById('week-labels').innerHTML = labels.map(function(l){
+    return '<div class="bar-label">'+l+'</div>';
+  }).join('');
+}
+
+function renderDonut(appts){
+  var total  = appts.length || 1;
+  var pnd    = appts.filter(function(a){ return a.status==='pending'; }).length;
+  var cnf    = appts.filter(function(a){ return a.status==='confirmed'; }).length;
+  var rej    = appts.filter(function(a){ return a.status==='rejected'||a.status==='cancelled'; }).length;
+
+  var circ = 2 * Math.PI * 15.9;
+  var pPct = pnd/total, cPct = cnf/total, rPct = rej/total;
+
+  // Simple stroke-dasharray offset trick
+  var pLen = pPct * 100, cLen = cPct * 100, rLen = rPct * 100;
+  var pOff = 0, cOff = pLen, rOff = pLen + cLen;
+
+  var el1 = document.getElementById('donut-pnd');
+  var el2 = document.getElementById('donut-cnf');
+  var el3 = document.getElementById('donut-rej');
+  if(el1) el1.setAttribute('stroke-dasharray', pLen+' '+(100-pLen));
+  if(el2){ el2.setAttribute('stroke-dasharray', cLen+' '+(100-cLen)); el2.setAttribute('stroke-dashoffset', -pOff); }
+  if(el3){ el3.setAttribute('stroke-dasharray', rLen+' '+(100-rLen)); el3.setAttribute('stroke-dashoffset', -(pOff+cLen)); }
+
+  setText('donut-total', appts.length);
+
+  document.getElementById('donut-legend').innerHTML = [
+    {lbl:'انتظار', cnt:pnd, color:'#e65100'},
+    {lbl:'مؤكدة',  cnt:cnf, color:'#1b5e42'},
+    {lbl:'ملغى/مرفوض', cnt:rej, color:'#c62828'}
+  ].map(function(it){
+    return '<div class="legend-item">'
+      +'<div class="legend-dot" style="background:'+it.color+'"></div>'
+      +'<span class="legend-label">'+it.lbl+'</span>'
+      +'<span class="legend-val">'+it.cnt+'</span>'
+      +'<span class="legend-pct">'+Math.round(it.cnt/Math.max(appts.length,1)*100)+'%</span>'
+      +'</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ANALYTICS
+// ═══════════════════════════════════════════════════════════════════
+function renderAnalytics(){
+  var users = getUsers();
+  var facs  = getFacs();
+  var appts = getAppts();
+
+  // Extra stat cards
+  var rate = appts.length ? Math.round(appts.filter(function(a){return a.status==='confirmed';}).length/appts.length*100) : 0;
+  document.getElementById('stat-row-2').innerHTML = [
+    {cls:'g', ico:'fas fa-percent',       val:rate+'%',         lbl:'نسبة تأكيد المواعيد'},
+    {cls:'a', ico:'fas fa-calendar-day',  val:appts.length,     lbl:'إجمالي المواعيد'},
+    {cls:'b', ico:'fas fa-users-between-lines', val:users.length+facs.length, lbl:'إجمالي المسجلين'},
+    {cls:'r', ico:'fas fa-triangle-exclamation', val:appts.filter(function(a){return a.status==='pending';}).length, lbl:'تحتاج مراجعة'}
+  ].map(function(s){
+    return '<div class="stat '+s.cls+'"><div class="stat-ico"><i class="'+s.ico+'"></i></div>'
+      +'<div class="stat-val">'+s.val+'</div><div class="stat-lbl">'+s.lbl+'</div></div>';
+  }).join('');
+
+  // Wilaya breakdown
+  var uwil = groupBy(users,'wilaya');
+  renderAnalyticsBar('analytics-wilayas', uwil, 'مواطن', 'var(--g)');
+
+  // Facility types
+  var ftypes = groupBy(facs,'type');
+  renderAnalyticsBar('analytics-fac-types', ftypes, 'مرفق', 'var(--accent)');
+
+  // Monthly
+  var monthly = {};
+  var months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  appts.forEach(function(a){
+    if(!a.date) return;
+    var m = parseInt(a.date.split('-')[1])-1;
+    var k = months[m]||'?';
+    monthly[k] = (monthly[k]||0)+1;
+  });
+  renderAnalyticsBar('analytics-monthly', monthly, 'موعد', 'var(--blue)');
+
+  // Popular times
+  var times = {};
+  appts.forEach(function(a){ if(a.time){ times[a.time]=(times[a.time]||0)+1; } });
+  renderAnalyticsBar('analytics-times', times, 'حجز', 'var(--purple)');
+
+  // Completion
+  var el = document.getElementById('analytics-completion');
+  var total = appts.length||1;
+  var cnf = appts.filter(function(a){return a.status==='confirmed';}).length;
+  var can = appts.filter(function(a){return a.status==='cancelled'||a.status==='rejected';}).length;
+  var pnd = appts.filter(function(a){return a.status==='pending';}).length;
+  el.innerHTML = [
+    {lbl:'مؤكدة',cnt:cnf,color:'#1b5e42'},
+    {lbl:'ملغاة/مرفوضة',cnt:can,color:'#c62828'},
+    {lbl:'في الانتظار',cnt:pnd,color:'#e65100'}
+  ].map(function(s){
+    var pct = Math.round(s.cnt/total*100);
+    return '<div style="margin-bottom:1rem">'
+      +'<div style="display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:.35rem">'
+      +'<span style="font-weight:700">'+s.lbl+'</span><span style="color:var(--faint)">'+s.cnt+' ('+pct+'%)</span></div>'
+      +'<div style="height:10px;background:var(--b2);border-radius:5px"><div style="height:100%;width:'+pct+'%;background:'+s.color+';border-radius:5px"></div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderAnalyticsBar(elId, obj, unit, color){
+  var el = document.getElementById(elId);
+  var items = Object.keys(obj).map(function(k){ return {k:k,v:obj[k]}; });
+  items.sort(function(a,b){ return b.v-a.v; });
+  items = items.slice(0,8);
+  var max = items[0]?items[0].v:1;
+  if(!items.length){ el.innerHTML='<div class="empty" style="padding:1rem"><p>لا توجد بيانات</p></div>'; return; }
+  el.innerHTML = items.map(function(it){
+    var pct = Math.round(it.v/max*100);
+    return '<div style="margin-bottom:.7rem">'
+      +'<div style="display:flex;justify-content:space-between;font-size:.76rem;margin-bottom:.25rem">'
+      +'<span style="font-weight:600">'+it.k+'</span><span style="color:var(--faint)">'+it.v+' '+unit+'</span></div>'
+      +'<div style="height:7px;background:var(--b2);border-radius:4px">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:4px"></div>'
+      +'</div></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// USERS
+// ═══════════════════════════════════════════════════════════════════
+function setUserFilter(f, btn){
+  userFilter = f;
+  document.querySelectorAll('#page-users .filter-btn').forEach(function(b){ b.classList.remove('act'); });
+  if(btn) btn.classList.add('act');
+  renderUsers();
+}
+
+function renderUsers(){
+  var users  = getUsers();
+  var q      = gv('user-search').toLowerCase();
+  var settings = getSettings();
+
+  var filtered = users.filter(function(u){
+    if(userFilter==='suspended' && !settings['sus_'+u.nin]) return false;
+    if(userFilter==='active'    &&  settings['sus_'+u.nin]) return false;
+    if(q && !(
+      (u.fname||'').toLowerCase().includes(q) ||
+      (u.lname||'').toLowerCase().includes(q) ||
+      (u.nin||'').includes(q) ||
+      (u.wilaya||'').includes(q) ||
+      (u.email||'').toLowerCase().includes(q)
+    )) return false;
+    return true;
+  });
+
+  setText('users-count-lbl', filtered.length + ' مستخدم');
+  var tb = document.getElementById('users-body');
+  if(!filtered.length){
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--faint)">لا توجد نتائج</td></tr>';
+    return;
+  }
+  var s = getSettings();
+  tb.innerHTML = filtered.map(function(u,i){
+    var susp = !!s['sus_'+u.nin];
+    return '<tr>'
+      +'<td><div style="display:flex;align-items:center;gap:.6rem">'
+      +'<div style="width:30px;height:30px;border-radius:50%;background:var(--g);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800">'+(u.fname?u.fname[0]:'م')+'</div>'
+      +'<div><div style="font-weight:700;font-size:.82rem">'+(u.fname||'')+' '+(u.lname||'')+'</div><div style="font-size:.67rem;color:var(--faint)">'+(u.email||'')+'</div></div></div></td>'
+      +'<td><span style="font-family:IBM Plex Mono,monospace;font-size:.73rem;color:var(--muted)">'+(u.nin||'—')+'</span></td>'
+      +'<td>'+(u.wilaya||'—')+'</td>'
+      +'<td>'+(u.phone||'—')+'</td>'
+      +'<td style="font-size:.72rem;color:var(--faint)">'+(u.created||'—')+'</td>'
+      +'<td>'+(susp?'<span class="bdg sus">موقوف</span>':'<span class="bdg cnf">نشط</span>')+'</td>'
+      +'<td><div class="tbl-actions">'
+      +'<button class="act-btn b" onclick="viewUser('+i+')"><i class="fas fa-eye"></i></button>'
+      +(susp
+        ? '<button class="act-btn g" onclick="unsuspendUser(\''+u.nin+'\')"><i class="fas fa-user-check"></i>رفع</button>'
+        : '<button class="act-btn a" onclick="suspendUser(\''+u.nin+'\')"><i class="fas fa-user-slash"></i>إيقاف</button>')
+      +'<button class="act-btn r" onclick="deleteUser(\''+u.nin+'\')"><i class="fas fa-trash"></i></button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function viewUser(idx){
+  var users = getUsers();
+  var u = getFilteredUsers()[idx] || users[idx];
+  if(!u) return;
+  var s = getSettings();
+  document.getElementById('modal-user-body').innerHTML =
+    ['الاسم الكامل',(u.fname||'—')+' '+(u.lname||'—'),
+     'رقم التعريف',u.nin||'—',
+     'البريد الإلكتروني',u.email||'—',
+     'الهاتف',u.phone||'—',
+     'الولاية',u.wilaya||'—',
+     'تاريخ الميلاد',u.dob||'—',
+     'تاريخ التسجيل',u.created||'—',
+     'نوع الحساب',u.type||u.role||'مواطن',
+     'الحالة',s['sus_'+u.nin]?'موقوف':'نشط'
+    ].reduce(function(html,v,i,arr){
+      if(i%2===0) html += '<div class="info-row"><span class="ik">'+v+'</span>';
+      else html += '<span class="iv">'+v+'</span></div>';
+      return html;
+    },'');
+
+  // Appointments of this user
+  var uAppts = getAppts().filter(function(a){ return a.userNin===u.nin; });
+  document.getElementById('modal-user-body').innerHTML +=
+    '<div style="margin-top:1rem;font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.5rem">مواعيده ('+uAppts.length+')</div>'
+    + (uAppts.length
+        ? uAppts.slice(-3).map(function(a){
+            return '<div style="font-size:.78rem;padding:.4rem .6rem;background:var(--surface);border-radius:7px;margin-bottom:.35rem">'
+              +'<strong>'+a.type+'</strong> · '+a.date+' · <span class="bdg '+(a.status==='confirmed'?'cnf':a.status==='pending'?'pnd':'cnl')+'">'+a.status+'</span>'
+              +'</div>';
+          }).join('')
+        : '<div style="font-size:.78rem;color:var(--faint)">لا توجد مواعيد</div>');
+
+  document.getElementById('modal-user-foot').innerHTML =
+    '<button class="btn out sm" onclick="closeModal(\'modal-user\')">إغلاق</button>'
+    +'<button class="btn red sm" onclick="deleteUser(\''+u.nin+'\');closeModal(\'modal-user\')"><i class="fas fa-trash"></i>حذف المستخدم</button>';
+
+  openModal('modal-user');
+}
+
+function getFilteredUsers(){
+  var users = getUsers();
+  var q = gv('user-search').toLowerCase();
+  return users.filter(function(u){
+    if(!q) return true;
+    return (u.fname||'').toLowerCase().includes(q)||(u.lname||'').toLowerCase().includes(q)||(u.nin||'').includes(q);
+  });
+}
+
+function suspendUser(nin){
+  if(!confirm2('إيقاف هذا المستخدم؟')) return;
+  var s = getSettings(); s['sus_'+nin]=true; saveSettings(s);
+  addLog('تم إيقاف المستخدم رقم '+nin,'warning');
+  toast('تم إيقاف المستخدم','warn');
+  renderUsers();
+}
+function unsuspendUser(nin){
+  var s = getSettings(); delete s['sus_'+nin]; saveSettings(s);
+  addLog('تم رفع الإيقاف عن المستخدم '+nin,'success');
+  toast('تم رفع الإيقاف');
+  renderUsers();
+}
+function deleteUser(nin){
+  if(!confirm2('حذف هذا المستخدم نهائياً؟')) return;
+  var users = getUsers().filter(function(u){ return u.nin!==nin; });
+  saveUsers(users);
+  addLog('تم حذف المستخدم رقم '+nin,'error');
+  toast('تم حذف المستخدم','warn');
+  renderUsers();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FACILITIES
+// ═══════════════════════════════════════════════════════════════════
+function setFacFilter(f, btn){
+  facFilter = f;
+  document.querySelectorAll('#page-facilities .filter-btn:not(.tb-btn)').forEach(function(b){ b.classList.remove('act'); });
+  if(btn) btn.classList.add('act');
+  renderFacilities();
+}
+
+function renderFacilities(){
+  var facs = getFacs();
+  var q    = gv('fac-search').toLowerCase();
+  var s    = getSettings();
+
+  var filtered = facs.filter(function(f){
+    if(facFilter!=='all' && f.type!==facFilter) return false;
+    if(q && !(
+      (f.name||'').toLowerCase().includes(q)||
+      (f.type||'').includes(q)||
+      (f.wilaya||'').includes(q)||
+      (f.email||'').toLowerCase().includes(q)
+    )) return false;
+    return true;
+  });
+
+  setText('facs-count-lbl', filtered.length+' مرفق');
+  var tb = document.getElementById('facs-body');
+  if(!filtered.length){
+    tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--faint)">لا توجد مرافق</td></tr>';
+    return;
+  }
+  tb.innerHTML = filtered.map(function(f){
+    var susp = !!s['sus_fac_'+f.id];
+    return '<tr>'
+      +'<td><div style="font-weight:700;font-size:.82rem">'+(f.name||'—')+'</div><div style="font-size:.67rem;color:var(--faint)">'+(f.email||'')+'</div></td>'
+      +'<td><span class="bdg act">'+(f.type||'—')+'</span></td>'
+      +'<td>'+(f.wilaya||'—')+'</td>'
+      +'<td>'+(f.phone||'—')+'</td>'
+      +'<td style="font-size:.73rem;color:var(--faint)">'+(f.from||'—')+' — '+(f.to||'—')+'</td>'
+      +'<td>'+(susp?'<span class="bdg sus">موقوف</span>':'<span class="bdg cnf">نشط</span>')+'</td>'
+      +'<td><div class="tbl-actions">'
+      +'<button class="act-btn b" onclick="viewFac(\''+f.id+'\')"><i class="fas fa-eye"></i></button>'
+      +(susp
+        ? '<button class="act-btn g" onclick="unsuspendFac(\''+f.id+'\')"><i class="fas fa-check"></i>رفع</button>'
+        : '<button class="act-btn a" onclick="suspendFac(\''+f.id+'\')"><i class="fas fa-ban"></i>إيقاف</button>')
+      +'<button class="act-btn r" onclick="deleteFac(\''+f.id+'\')"><i class="fas fa-trash"></i></button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function viewFac(facId){
+  var facs = getFacs();
+  var f = facs.find(function(x){ return x.id===facId; });
+  if(!f) return;
+  var facAppts = getAppts().filter(function(a){ return a.facId===facId; });
+  document.getElementById('modal-fac-body').innerHTML =
+    ['اسم المرفق',f.name||'—','النوع',f.type||'—','الولاية',f.wilaya||'—',
+     'العنوان',f.address||'—','الهاتف',f.phone||'—','البريد',f.email||'—',
+     'ساعات العمل',(f.from||'—')+' — '+(f.to||'—'),'تاريخ التسجيل',f.created||'—',
+     'مجموع مواعيده',facAppts.length+' موعد'
+    ].reduce(function(html,v,i){
+      if(i%2===0) html += '<div class="info-row"><span class="ik">'+v+'</span>';
+      else html += '<span class="iv">'+v+'</span></div>';
+      return html;
+    },'');
+  document.getElementById('modal-fac-foot').innerHTML =
+    '<button class="btn out sm" onclick="closeModal(\'modal-fac\')">إغلاق</button>'
+    +'<button class="btn red sm" onclick="deleteFac(\''+f.id+'\');closeModal(\'modal-fac\')"><i class="fas fa-trash"></i>حذف المرفق</button>';
+  openModal('modal-fac');
+}
+
+function suspendFac(id){
+  if(!confirm2('إيقاف هذا المرفق؟')) return;
+  var s=getSettings(); s['sus_fac_'+id]=true; saveSettings(s);
+  addLog('تم إيقاف المرفق '+id,'warning');
+  toast('تم إيقاف المرفق','warn'); renderFacilities();
+}
+function unsuspendFac(id){
+  var s=getSettings(); delete s['sus_fac_'+id]; saveSettings(s);
+  addLog('تم رفع الإيقاف عن المرفق '+id,'success');
+  toast('تم رفع الإيقاف'); renderFacilities();
+}
+function deleteFac(id){
+  if(!confirm2('حذف هذا المرفق نهائياً؟')) return;
+  saveFacs(getFacs().filter(function(f){ return f.id!==id; }));
+  addLog('تم حذف المرفق '+id,'error');
+  toast('تم حذف المرفق','warn'); renderFacilities();
+}
+function openAddFacModal(){ openModal('modal-add-fac'); }
+function addFacility(){
+  var type=gv('af-type'),wil=gv('af-wil'),name=gv('af-name'),email=gv('af-email'),pw=gv('af-pw');
+  if(!type||!wil||!name.trim()||!email.trim()||!pw){
+    toast('يرجى تعبئة جميع الحقول المطلوبة','err'); return;
+  }
+  var facs = getFacs();
+  if(facs.find(function(f){ return f.email===email; })){
+    toast('البريد الإلكتروني مسجّل مسبقاً','err'); return;
+  }
+  facs.push({
+    role:'facility',id:'FAC-'+Date.now(),type:type,name:name.trim(),
+    wilaya:wil,address:gv('af-addr'),phone:gv('af-phone'),
+    email:email.trim(),from:gv('af-from'),to:gv('af-to'),
+    pw:pw,created:new Date().toLocaleDateString('ar-DZ')
+  });
+  saveFacs(facs);
+  addLog('تمت إضافة مرفق جديد: '+name+' ('+type+' — '+wil+')','success');
+  toast('تم إضافة المرفق بنجاح!');
+  closeModal('modal-add-fac');
+  renderFacilities();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// APPOINTMENTS
+// ═══════════════════════════════════════════════════════════════════
+function setApptFilter(f, btn){
+  apptFilter = f;
+  document.querySelectorAll('#page-appointments .filter-btn').forEach(function(b){ b.classList.remove('act'); });
+  if(btn) btn.classList.add('act');
+  renderAppts();
+}
+
+function renderAppts(){
+  var appts = getAppts();
+  var q     = gv('appt-search').toLowerCase();
+  var sMap  = {pending:'انتظار',confirmed:'مؤكد',rejected:'مرفوض',cancelled:'ملغى'};
+  var sCls  = {pending:'pnd',confirmed:'cnf',rejected:'cnl',cancelled:'cnl'};
+
+  var filtered = appts.filter(function(a){
+    if(apptFilter!=='all' && a.status!==apptFilter) return false;
+    if(q && !(
+      (a.ref||'').toLowerCase().includes(q)||
+      (a.userName||'').toLowerCase().includes(q)||
+      (a.type||'').includes(q)||
+      (a.branch||'').includes(q)
+    )) return false;
+    return true;
+  }).slice().reverse();
+
+  setText('appts-count-lbl', filtered.length+' موعد');
+  var tb = document.getElementById('appts-body');
+  if(!filtered.length){
+    tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--faint)">لا توجد مواعيد</td></tr>';
+    return;
+  }
+  tb.innerHTML = filtered.map(function(a){
+    return '<tr>'
+      +'<td><span style="font-family:IBM Plex Mono,monospace;font-size:.72rem;color:var(--faint)">'+(a.ref||'—')+'</span></td>'
+      +'<td><strong>'+(a.userName||'—')+'</strong></td>'
+      +'<td>'+(a.type||'—')+'</td>'
+      +'<td style="font-size:.77rem">'+(a.branch||'—')+'</td>'
+      +'<td style="font-family:IBM Plex Mono,monospace;font-size:.73rem">'+(a.date||'—')+'</td>'
+      +'<td style="font-family:IBM Plex Mono,monospace;font-size:.73rem">'+(a.time||'—')+'</td>'
+      +'<td><span class="bdg '+(sCls[a.status]||'pnd')+'">'+(sMap[a.status]||a.status)+'</span></td>'
+      +'<td><div class="tbl-actions">'
+      +'<button class="act-btn b" onclick="viewAppt(\''+a.ref+'\')"><i class="fas fa-eye"></i></button>'
+      +(a.status==='pending'?'<button class="act-btn g" onclick="updateApptStatus(\''+a.ref+'\',\'confirmed\')"><i class="fas fa-check"></i></button><button class="act-btn r" onclick="updateApptStatus(\''+a.ref+'\',\'rejected\')"><i class="fas fa-xmark"></i></button>':'')
+      +'<button class="act-btn r" onclick="deleteAppt(\''+a.ref+'\')"><i class="fas fa-trash"></i></button>'
+      +'</div></td></tr>';
+  }).join('');
+}
+
+function viewAppt(ref){
+  var a = getAppts().find(function(x){ return x.ref===ref; });
+  if(!a) return;
+  var sMap={pending:'قيد الانتظار',confirmed:'مؤكد',rejected:'مرفوض',cancelled:'ملغى'};
+  var sCls={pending:'pnd',confirmed:'cnf',rejected:'cnl',cancelled:'cnl'};
+  document.getElementById('modal-appt-body').innerHTML =
+    ['رقم المرجع',a.ref,'المواطن',a.userName||'—','رقم التعريف',a.userNin||'—',
+     'نوع الخدمة',a.type,'الفرع',a.branch||'—','الولاية','ولاية '+(a.wilaya||'—'),
+     'التاريخ',a.date,'الوقت',a.time,'الغرض',a.purpose||'—',
+     'ملاحظات',a.notes||'—','الحالة','<span class="bdg '+(sCls[a.status]||'pnd')+'">'+sMap[a.status]+'</span>'
+    ].reduce(function(html,v,i){
+      if(i%2===0) html += '<div class="info-row"><span class="ik">'+v+'</span>';
+      else html += '<span class="iv">'+v+'</span></div>';
+      return html;
+    },'');
+  document.getElementById('modal-appt-foot').innerHTML =
+    '<button class="btn out sm" onclick="closeModal(\'modal-appt\')">إغلاق</button>'
+    +(a.status==='pending'
+      ? '<button class="btn sm" onclick="updateApptStatus(\''+a.ref+'\',\'confirmed\');closeModal(\'modal-appt\')"><i class="fas fa-check"></i>تأكيد</button>'
+        +'<button class="btn red sm" onclick="updateApptStatus(\''+a.ref+'\',\'rejected\');closeModal(\'modal-appt\')"><i class="fas fa-xmark"></i>رفض</button>'
+      : '');
+  openModal('modal-appt');
+}
+
+function updateApptStatus(ref, status){
+  var appts = getAppts();
+  var idx = appts.findIndex(function(a){ return a.ref===ref; });
+  if(idx<0) return;
+  appts[idx].status = status;
+  saveAppts(appts);
+  addLog('تم تغيير حالة الموعد '+ref+' إلى '+status,(status==='confirmed'?'success':'warning'));
+  toast(status==='confirmed'?'تم تأكيد الموعد':'تم رفض الموعد', status==='confirmed'?'':'warn');
+  renderAppts();
+}
+
+function deleteAppt(ref){
+  if(!confirm2('حذف هذا الموعد نهائياً؟')) return;
+  saveAppts(getAppts().filter(function(a){ return a.ref!==ref; }));
+  addLog('تم حذف الموعد '+ref,'error');
+  toast('تم حذف الموعد','warn'); renderAppts();
+}
+
+function bulkConfirm(){
+  if(!confirm2('تأكيد جميع المواعيد المعلقة؟')) return;
+  var appts = getAppts();
+  var count = 0;
+  appts.forEach(function(a){ if(a.status==='pending'){ a.status='confirmed'; count++; } });
+  saveAppts(appts);
+  addLog('تم تأكيد '+count+' موعد معلق بالجملة','success');
+  toast('تم تأكيد '+count+' موعد!');
+  renderAppts();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DOCUMENTS
+// ═══════════════════════════════════════════════════════════════════
+function renderDocs(){
+  var docs = getDocs();
+  var sMap = {pending:'قيد المعالجة',approved:'معتمدة',rejected:'مرفوضة'};
+  var sCls = {pending:'pnd',approved:'cnf',rejected:'cnl'};
+  var tb = document.getElementById('docs-body');
+  if(!docs.length){
+    tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--faint)">لا توجد طلبات وثائق</td></tr>';
+    return;
+  }
+  tb.innerHTML = docs.slice().reverse().map(function(d){
+    return '<tr>'
+      +'<td style="font-family:IBM Plex Mono,monospace;font-size:.72rem;color:var(--faint)">'+(d.ref||'—')+'</td>'
+      +'<td>'+(d.userName||d.userNin||'—')+'</td>'
+      +'<td>'+(d.typeName||d.type||'—')+'</td>'
+      +'<td>'+(d.purpose||'—')+'</td>'
+      +'<td style="text-align:center">'+(d.copies||'1')+'</td>'
+      +'<td style="font-size:.72rem;color:var(--faint)">'+(d.created||'—')+'</td>'
+      +'<td><span class="bdg '+(sCls[d.status]||'pnd')+'">'+(sMap[d.status]||d.status||'انتظار')+'</span></td>'
+      +'<td><div class="tbl-actions">'
+      +(d.status==='pending'
+        ? '<button class="act-btn g" onclick="updateDocStatus(\''+d.ref+'\',\'approved\')"><i class="fas fa-check"></i>قبول</button>'
+          +'<button class="act-btn r" onclick="updateDocStatus(\''+d.ref+'\',\'rejected\')"><i class="fas fa-xmark"></i>رفض</button>'
+        : '')
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+}
+
+function updateDocStatus(ref, status){
+  var docs = getDocs();
+  var idx = docs.findIndex(function(d){ return d.ref===ref; });
+  if(idx>=0){ docs[idx].status=status; saveDocs(docs); }
+  addLog('تم تحديث طلب الوثيقة '+ref+' إلى '+status,'success');
+  toast(status==='approved'?'تم قبول الطلب':'تم رفض الطلب', status==='approved'?'':'warn');
+  renderDocs();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ANNOUNCEMENTS
+// ═══════════════════════════════════════════════════════════════════
+function renderAnnouncements(){
+  var anns = getAnns();
+  var colors = {info:'var(--blue)',warning:'#e65100',success:'var(--g)',urgent:'var(--red)'};
+  var icons  = {info:'fas fa-info-circle',warning:'fas fa-triangle-exclamation',success:'fas fa-check-circle',urgent:'fas fa-bell'};
+  var el = document.getElementById('ann-list');
+  if(!anns.length){
+    el.innerHTML='<div class="empty"><i class="fas fa-bullhorn"></i><p>لا توجد إعلانات منشورة</p></div>'; return;
+  }
+  el.innerHTML = anns.slice().reverse().map(function(a,i){
+    var c = colors[a.type]||'var(--blue)';
+    return '<div class="ann-item">'
+      +'<div class="ann-ico" style="background:rgba(0,0,0,0.05);color:'+c+'"><i class="'+(icons[a.type]||'fas fa-info')+'"></i></div>'
+      +'<div style="flex:1">'
+      +'<div class="ann-title">'+a.title+'</div>'
+      +'<div class="ann-sub">'+a.body+'</div>'
+      +'<div style="font-size:.64rem;color:var(--faint);margin-top:.3rem">'+a.created+' · '+a.target+'</div>'
+      +'</div>'
+      +'<button class="act-btn r" onclick="deleteAnn('+i+')"><i class="fas fa-trash"></i></button>'
+      +'</div>';
+  }).join('');
+}
+
+function publishAnnouncement(){
+  var title=gv('ann-title').trim(), body=gv('ann-body').trim();
+  if(!title||!body){ toast('يرجى ملء العنوان والنص','err'); return; }
+  var anns = getAnns();
+  anns.push({title,body,type:gv('ann-type'),target:gv('ann-target'),created:new Date().toLocaleString('ar-DZ')});
+  localStorage.setItem(ANN_KEY, JSON.stringify(anns));
+  addLog('تم نشر إعلان: '+title,'success');
+  toast('تم نشر الإعلان!');
+  document.getElementById('ann-title').value='';
+  document.getElementById('ann-body').value='';
+  renderAnnouncements();
+}
+
+function deleteAnn(idx){
+  var anns = getAnns(); anns.splice(idx,1);
+  localStorage.setItem(ANN_KEY, JSON.stringify(anns));
+  renderAnnouncements();
+}
+function clearAnnouncements(){
+  if(!confirm2('مسح جميع الإعلانات؟')) return;
+  localStorage.setItem(ANN_KEY,'[]');
+  addLog('تم مسح جميع الإعلانات','warning');
+  renderAnnouncements();
+  toast('تم مسح الإعلانات','warn');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// WILAYAS
+// ═══════════════════════════════════════════════════════════════════
+function renderWilayas(){
+  var users  = getUsers();
+  var facs   = getFacs();
+  var appts  = getAppts();
+
+  var wSet = {};
+  users.forEach(function(u){ if(u.wilaya) wSet[u.wilaya]=true; });
+  facs.forEach(function(f){ if(f.wilaya) wSet[f.wilaya]=true; });
+
+  var wList = Object.keys(wSet);
+  if(!wList.length){ document.getElementById('wilaya-table').innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--faint)">لا توجد بيانات</td></tr>'; return; }
+
+  var maxAppts = 1;
+  var rows = wList.map(function(w){
+    var uc = users.filter(function(u){ return u.wilaya===w; }).length;
+    var fc = facs.filter(function(f){ return f.wilaya===w; }).length;
+    var ac = appts.filter(function(a){ return a.wilaya===w; }).length;
+    if(ac>maxAppts) maxAppts=ac;
+    return {w,uc,fc,ac};
+  });
+  rows.sort(function(a,b){ return b.ac-a.ac; });
+
+  document.getElementById('wilaya-table').innerHTML = rows.map(function(r){
+    var pct = Math.round(r.ac/maxAppts*100);
+    return '<tr>'
+      +'<td><strong>'+r.w+'</strong></td>'
+      +'<td style="text-align:center">'+r.uc+'</td>'
+      +'<td style="text-align:center">'+r.fc+'</td>'
+      +'<td style="text-align:center">'+r.ac+'</td>'
+      +'<td style="min-width:120px"><div style="height:8px;background:var(--b2);border-radius:4px"><div style="height:100%;width:'+pct+'%;background:var(--g);border-radius:4px"></div></div></td>'
+      +'</tr>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════════════════════════════════
+function toggleSetting(key, el){
+  el.classList.toggle('on');
+  var s = getSettings();
+  s[key] = el.classList.contains('on');
+  saveSettings(s);
+  addLog('تم تغيير الإعداد: '+key+' → '+(s[key]?'مفعّل':'معطّل'),'info');
+  toast('تم حفظ الإعداد');
+}
+
+function changeAdminPw(){
+  var old=gv('old-pw'), nw=gv('new-pw'), conf=gv('conf-pw');
+  var stored = localStorage.getItem(ADMIN_PW_KEY)||DEFAULT_PW;
+  if(old!==stored){ toast('كلمة المرور الحالية غير صحيحة','err'); return; }
+  if(nw.length<6){ toast('كلمة المرور الجديدة قصيرة جداً','err'); return; }
+  if(nw!==conf){ toast('كلمتا المرور غير متطابقتين','err'); return; }
+  localStorage.setItem(ADMIN_PW_KEY, nw);
+  addLog('تم تغيير كلمة مرور المدير','success');
+  toast('تم تحديث كلمة المرور!');
+  document.getElementById('old-pw').value='';
+  document.getElementById('new-pw').value='';
+  document.getElementById('conf-pw').value='';
+}
+
+function renderSettings(){
+  var s = getSettings();
+  var keys = ['maintenance','registration','autoverify','emails','logging'];
+  keys.forEach(function(k){
+    var el = document.getElementById('toggle-'+k);
+    if(el){
+      if(s[k]===true)  el.classList.add('on');
+      if(s[k]===false) el.classList.remove('on');
+    }
+  });
+
+  // System info
+  var users = getUsers(), facs = getFacs(), appts = getAppts(), docs = getDocs();
+  var lsSize = 0;
+  try{ lsSize = new Blob([JSON.stringify(localStorage)]).size; } catch(e){}
+  document.getElementById('sys-info').innerHTML = [
+    'نسخة المنصة','ORDO v2.0.0',
+    'المواطنون المسجلون',users.length+' مستخدم',
+    'المرافق المسجلة',facs.length+' مرفق',
+    'إجمالي المواعيد',appts.length+' موعد',
+    'طلبات الوثائق',docs.length+' طلب',
+    'حجم التخزين المحلي',Math.round(lsSize/1024)+' KB',
+    'حالة النظام','يعمل بشكل طبيعي ✓'
+  ].reduce(function(html,v,i){
+    if(i%2===0) html += '<div class="info-row"><span class="ik">'+v+'</span>';
+    else html += '<span class="iv">'+v+'</span></div>';
+    return html;
+  },'');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DATA MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════
+function exportData(){
+  var data = {
+    users:     getUsers(),
+    facilities:getFacs(),
+    appointments:getAppts(),
+    documents: getDocs(),
+    announcements:getAnns(),
+    settings:  getSettings(),
+    logs:      getLogs(),
+    exportedAt:new Date().toISOString()
+  };
+  var blob = new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ORDO_backup_'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();
+  addLog('تم تصدير بيانات النظام','success');
+  toast('تم تصدير البيانات بنجاح!');
+}
+
+function backupData(){
+  var key = 'ordo_backup_'+Date.now();
+  var data = {users:getUsers(),facilities:getFacs(),appointments:getAppts(),documents:getDocs()};
+  localStorage.setItem(key, JSON.stringify(data));
+  addLog('تم حفظ نسخة احتياطية: '+key,'success');
+  toast('تم حفظ النسخة الاحتياطية!');
+}
+
+function seedDemoData(){
+  if(!confirm2('سيتم توليد بيانات تجريبية. المتابعة؟')) return;
+  var wilayas = ['الجزائر','وهران','قسنطينة','عنابة','بجاية','تيارت','سطيف','باتنة'];
+  var names   = [['أحمد','بن علي'],['فاطمة','بوزيد'],['محمد','كريمي'],['سارة','حمداوي'],['يوسف','معمري'],['نور','حميداني'],['عمر','بلقاسم'],['رانيا','حداد']];
+  var types   = ['بلدية','سونلغاز','محكمة','نسار','موثق'];
+  var purposes= ['استخراج وثيقة','تجديد وثيقة','تسوية وضع إداري','تقديم ملف'];
+  var statuses= ['pending','confirmed','cancelled','pending','confirmed'];
+
+  var users = getUsers();
+  names.forEach(function(n,i){
+    var wil = wilayas[i%wilayas.length];
+    if(!users.find(function(u){ return u.nin==='10000000'+i; })){
+      users.push({role:'citizen',type:'مواطن',nin:'10000000'+i,fname:n[0],lname:n[1],email:n[0]+i+'@email.dz',phone:'055 000 000'+i,wilaya:wil,pw:'pass1234',created:new Date().toLocaleDateString('ar-DZ')});
+    }
+  });
+  saveUsers(users);
+
+  var facs = getFacs();
+  wilayas.forEach(function(w,i){
+    var type = types[i%types.length];
+    if(!facs.find(function(f){ return f.wilaya===w&&f.type===type; })){
+      facs.push({role:'facility',id:'FAC-DEMO-'+i,type:type,name:type+' — '+w+' المركز',wilaya:w,address:w+' المركز',phone:'023 00 00 0'+i,email:type.replace(' ','')+'@'+w+'.dz',from:'08:00',to:'16:30',pw:'fac1234',created:new Date().toLocaleDateString('ar-DZ')});
+    }
+  });
+  saveFacs(facs);
+
+  var appts = getAppts();
+  var today = new Date();
+  for(var i=0;i<12;i++){
+    var d = new Date(today); d.setDate(today.getDate()+i);
+    var ds = d.getFullYear()+'-'+(d.getMonth()+1<10?'0':'')+(d.getMonth()+1)+'-'+(d.getDate()<10?'0':'')+d.getDate();
+    var user = names[i%names.length];
+    appts.push({ref:'ORD-DEMO-'+Date.now()+'-'+i,type:types[i%types.length],facId:'FAC-DEMO-'+(i%wilayas.length),branch:types[i%types.length]+' — '+wilayas[i%wilayas.length]+' المركز',wilaya:wilayas[i%wilayas.length],date:ds,time:(8+i%8)+':00',purpose:purposes[i%purposes.length],notes:'',status:statuses[i%statuses.length],created:new Date().toLocaleDateString('ar-DZ'),userNin:'10000000'+(i%8),userName:user[0]+' '+user[1]});
+  }
+  saveAppts(appts);
+
+  addLog('تم توليد بيانات تجريبية','success');
+  toast('تم توليد البيانات التجريبية!');
+  renderOverview();
+}
+
+function clearUsers(){
+  if(!confirm2('حذف جميع المستخدمين نهائياً؟')) return;
+  saveUsers([]);
+  addLog('تم حذف جميع المستخدمين','error');
+  toast('تم حذف جميع المستخدمين','warn');
+}
+function clearFacilities(){
+  if(!confirm2('حذف جميع المرافق نهائياً؟')) return;
+  saveFacs([]);
+  addLog('تم حذف جميع المرافق','error');
+  toast('تم حذف جميع المرافق','warn');
+}
+function clearAppointments(){
+  if(!confirm2('حذف جميع المواعيد نهائياً؟')) return;
+  saveAppts([]);
+  localStorage.setItem('ordo_booked','{}');
+  addLog('تم حذف جميع المواعيد','error');
+  toast('تم حذف جميع المواعيد','warn');
+}
+function clearAll(){
+  if(!confirm2('⚠️ سيتم حذف جميع البيانات من النظام. هذا الإجراء لا يمكن التراجع عنه. المتابعة؟')) return;
+  ['ordo_users','ordo_facilities','ordo_appts','ordo_docs_list','ordo_booked','ordo_announcements'].forEach(function(k){ localStorage.removeItem(k); });
+  addLog('⚠️ تم مسح جميع بيانات النظام','error');
+  toast('تم مسح جميع البيانات','warn');
+  renderOverview();
+}
+
+function adminLogout(){
+  sessionStorage.removeItem(ADMIN_SESS);
+  showAdminLogin();
+}
+
+// Close modals on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(function(m){
+  m.addEventListener('click', function(e){
+    if(e.target===m) m.classList.remove('open');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+renderOverview();
+</script>
+</body>
+</html>

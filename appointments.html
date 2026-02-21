@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORDO · حجز موعد</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+/* الشريط بالكامل */
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+/* المسار */
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.08);
+}
+
+/* المقبض */
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: 
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+  box-shadow:
+    0 0 0px transparent,
+    0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* تأثير Hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  transform: scale(1.15);
+  box-shadow:
+    0 0 12px var(--scrollbar-glow),
+    0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* عند السحب */
+::-webkit-scrollbar-thumb:active {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 16px var(--scrollbar-glow),
+    inset 0 0 4px rgba(0,0,0,0.2);
+}
+
+/* زوايا التقاء الشريط */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* دعم فايرفوكس */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1b5e42 rgba(0,0,0,0.05);
+}
+
+:root{--g:#1b5e42;--gl:#236b50;--gd:#133d2c;--accent:#c8a84b;--w:#fff;--off:#f4f6f5;--text:#1a2a22;--muted:#5a7066;--b:#dde6e2;--red:#c62828;--sw:255px}
+html,body{height:100%;font-family:'Cairo','Tajawal',sans-serif;direction:rtl;background:var(--off);color:var(--text)}
+/* SIDEBAR */
+.sb{position:fixed;top:0;right:0;width:var(--sw);height:100vh;background:var(--gd);display:flex;flex-direction:column;z-index:100;overflow-y:auto}
+.sb-brand{padding:1.3rem 1.4rem;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:.7rem}
+.sb-logo{font-family:'Tajawal',sans-serif;font-size:1.45rem;font-weight:800;color:var(--w);letter-spacing:3px}
+.sb-flag{width:20px;height:14px;border-radius:2px;object-fit:cover}
+.sb-user{padding:1.1rem 1.4rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sb-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#e8c56a);display:flex;align-items:center;justify-content:center;font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;color:var(--w);margin-bottom:.65rem}
+.sb-name{font-size:.85rem;font-weight:700;color:var(--w);margin-bottom:.15rem}
+.sb-type{font-size:.68rem;color:var(--accent);font-weight:500}
+.sb-wil{font-size:.63rem;color:rgba(255,255,255,0.32);margin-top:.12rem}
+.sb-nav{flex:1;padding:.8rem 0}
+.ngl{font-size:.58rem;font-weight:700;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:2px;padding:.7rem 1.4rem .35rem}
+.ni{display:flex;align-items:center;gap:.8rem;padding:.68rem 1.4rem;color:rgba(255,255,255,0.62);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s;border-right:3px solid transparent;text-decoration:none}
+.ni i{width:17px;text-align:center;font-size:.85rem;color:rgba(255,255,255,0.38)}
+.ni:hover{color:var(--w);background:rgba(255,255,255,0.05)}
+.ni.act{color:var(--w);background:rgba(255,255,255,0.08);border-right-color:var(--accent)}
+.ni.act i{color:var(--accent)}
+.sb-bot{padding:.9rem 1.4rem;border-top:1px solid rgba(255,255,255,0.06)}
+.logout{display:flex;align-items:center;gap:.65rem;color:rgba(255,255,255,0.38);font-size:.78rem;cursor:pointer;background:none;border:none;font-family:'Cairo',sans-serif;width:100%;transition:color .2s}
+.logout:hover{color:var(--red)}
+/* MAIN */
+.main{margin-right:var(--sw);min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--w);border-bottom:1px solid var(--b);padding:0 1.8rem;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.tb-title{font-family:'Tajawal',sans-serif;font-size:1.1rem;font-weight:800;color:var(--text)}
+.wil-badge{display:flex;align-items:center;gap:.45rem;background:rgba(27,94,66,0.07);border:1px solid rgba(27,94,66,0.14);border-radius:50px;padding:.3rem .85rem;font-size:.72rem;font-weight:700;color:var(--g)}
+.wil-badge i{color:var(--accent)}
+.content{padding:1.5rem 1.8rem;flex:1}
+/* PAGES */
+.page{display:none}.page.act{display:block}
+/* TABS */
+.mtabs{display:flex;gap:.4rem;margin-bottom:1.4rem;background:var(--w);border:1px solid var(--b);border-radius:11px;padding:.35rem}
+.mtab{flex:1;padding:.65rem;border:none;background:none;font-family:'Cairo',sans-serif;font-size:.8rem;font-weight:700;color:var(--muted);cursor:pointer;border-radius:7px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.mtab.act{background:var(--g);color:var(--w)}
+/* CARDS */
+.card{background:var(--w);border:1px solid var(--b);border-radius:14px;padding:1.6rem;margin-bottom:1.2rem}
+.card h3{font-family:'Tajawal',sans-serif;font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:1.3rem;padding-bottom:.85rem;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:.55rem}
+.card h3 i{color:var(--g);font-size:.95rem}
+/* FORM */
+.fg{margin-bottom:1rem}
+.fg label{display:block;font-size:.72rem;font-weight:700;color:var(--text);margin-bottom:.36rem}
+.fg label .req{color:var(--red);margin-right:2px}
+.field{width:100%;padding:.75rem .9rem;border:1.5px solid var(--b);border-radius:9px;font-family:'Cairo',sans-serif;font-size:.84rem;color:var(--text);background:var(--w);outline:none;transition:all .2s;appearance:none;-webkit-appearance:none}
+.field:focus{border-color:var(--g);box-shadow:0 0 0 3px rgba(27,94,66,0.07)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+/* WIZARD */
+.wiz{display:flex;align-items:center;margin-bottom:1.3rem}
+.wd{width:27px;height:27px;border-radius:50%;border:2px solid var(--b);display:flex;align-items:center;justify-content:center;font-size:.67rem;font-weight:700;color:var(--muted);flex-shrink:0;transition:all .25s}
+.wd.act{border-color:var(--g);color:var(--g)}
+.wd.done{background:var(--g);border-color:var(--g);color:var(--w)}
+.wl{flex:1;height:2px;background:var(--b);transition:background .25s}
+.wl.done{background:var(--g)}
+/* SERVICE GRID */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1.1rem}
+.svc-card{border:1.5px solid var(--b);border-radius:11px;padding:.85rem .4rem;text-align:center;cursor:pointer;transition:all .18s;position:relative}
+.svc-card:hover{border-color:var(--g);background:rgba(27,94,66,0.03)}
+.svc-card.sel{border-color:var(--g);background:rgba(27,94,66,0.06)}
+.svc-card.sel::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:4px;left:5px;font-size:.52rem;color:var(--g)}
+.svc-card i{display:block;font-size:1.2rem;color:var(--g);margin-bottom:.35rem}
+.svc-card span{font-size:.7rem;font-weight:700;color:var(--text)}
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
+.cal-nav-btn{width:30px;height:30px;border:1px solid var(--b);border-radius:7px;background:var(--w);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .18s;font-size:.8rem}
+.cal-nav-btn:hover{border-color:var(--g);color:var(--g)}
+.cal-month{font-size:.88rem;font-weight:700;color:var(--text)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem}
+.cal-day-hdr{text-align:center;font-size:.62rem;font-weight:700;color:var(--muted);padding:.3rem 0}
+.cal-day{padding:.5rem .2rem;text-align:center;border:1.5px solid var(--b);border-radius:7px;cursor:pointer;transition:all .18s;font-size:.74rem;font-weight:600;color:var(--text);min-height:32px;display:flex;align-items:center;justify-content:center}
+.cal-day:hover:not(.dis):not(.empty){border-color:var(--g);background:rgba(27,94,66,0.04)}
+.cal-day.sel{background:var(--g);color:var(--w);border-color:var(--g)}
+.cal-day.dis{background:var(--off);color:rgba(170,190,185,0.6);cursor:not-allowed;border-color:var(--b)}
+.cal-day.today{border-color:var(--accent)}
+.cal-day.empty{border:none;background:transparent;cursor:default}
+/* TIME SLOTS */
+.time-section{margin-top:1.2rem}
+.time-label{font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.8px}
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem}
+.ts{padding:.55rem .2rem;text-align:center;border:1.5px solid var(--b);border-radius:8px;cursor:pointer;font-size:.74rem;font-weight:600;color:var(--text);transition:all .18s}
+.ts:hover:not(.tk){border-color:var(--g)}
+.ts.sel{background:var(--g);color:var(--w);border-color:var(--g)}
+.ts.tk{background:var(--off);color:rgba(170,190,185,0.7);cursor:not-allowed;text-decoration:line-through}
+/* SUMMARY ROW */
+.sum-row{display:flex;justify-content:space-between;border-bottom:1px solid var(--b);padding:.35rem 0;font-size:.8rem}
+.sum-row .sk{color:var(--muted);font-size:.76rem}
+.sum-row .sv{font-weight:700;color:var(--text)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.82rem 1.6rem;background:var(--g);color:var(--w);border:none;border-radius:9px;font-family:'Cairo',sans-serif;font-size:.87rem;font-weight:700;cursor:pointer;transition:all .25s}
+.btn:hover{background:var(--gd);transform:translateY(-2px);box-shadow:0 5px 15px rgba(27,94,66,.2)}
+.btn.out{background:transparent;color:var(--g);border:1.5px solid var(--g)}
+.btn.out:hover{background:rgba(27,94,66,0.04)}
+.btn-row{display:flex;gap:.7rem;flex-wrap:wrap}
+/* APPOINTMENT LIST */
+.appt-list{display:flex;flex-direction:column;gap:.8rem}
+.ac{background:var(--w);border:1px solid var(--b);border-radius:12px;padding:1.2rem 1.3rem;display:flex;align-items:center;gap:1rem;transition:all .2s}
+.ac:hover{box-shadow:0 4px 14px rgba(27,94,66,.08);border-color:var(--g)}
+.ac-ico{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.ac-info{flex:1}
+.ac-info h4{font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:.18rem}
+.ac-info p{font-size:.74rem;color:var(--muted)}
+.ac-meta{text-align:left;flex-shrink:0}
+.ac-date{font-size:.78rem;font-weight:700;color:var(--text);margin-bottom:.22rem}
+.ac-time{font-size:.72rem;color:var(--muted)}
+.bdg{font-size:.63rem;font-weight:700;padding:.18rem .55rem;border-radius:50px;display:inline-block;margin-top:.25rem}
+.bdg.pnd{background:rgba(255,152,0,.1);color:#e65100;border:1px solid rgba(255,152,0,.18)}
+.bdg.cnf{background:rgba(27,94,66,.1);color:var(--g);border:1px solid rgba(27,94,66,.14)}
+.bdg.cnl{background:rgba(198,40,40,.08);color:var(--red);border:1px solid rgba(198,40,40,.12)}
+/* DOC */
+.doc-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.3rem}
+.dtc{border:1.5px solid var(--b);border-radius:13px;padding:1.3rem;cursor:pointer;transition:all .22s;position:relative}
+.dtc:hover{border-color:var(--g);transform:translateY(-2px)}
+.dtc.sel{border-color:var(--g);background:rgba(27,94,66,0.04)}
+.dtc.sel::after{content:'\f00c';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:7px;left:9px;font-size:.6rem;color:var(--g)}
+.dtc-ic{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:.8rem}
+.dtc h4{font-size:.88rem;font-weight:700;margin-bottom:.22rem}
+.dtc p{font-size:.72rem;color:var(--muted);line-height:1.6}
+/* DOC PREVIEW */
+.doc-prev{background:var(--w);border:1px solid var(--b);border-radius:14px;overflow:hidden}
+.doc-prev-hdr{background:linear-gradient(135deg,var(--g),var(--gl));padding:1.1rem 1.4rem;display:flex;align-items:center;justify-content:space-between}
+.doc-prev-hdr h4{color:var(--w);font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:700}
+.doc-frame{padding:1.5rem;direction:rtl;font-size:.8rem;line-height:2;color:var(--text);max-height:520px;overflow-y:auto}
+.doc-off-hdr{text-align:center;margin-bottom:1.4rem;border-bottom:2px solid var(--text);padding-bottom:1rem}
+.doc-off-hdr h2{font-family:'Tajawal',sans-serif;font-size:.95rem;font-weight:800;margin-bottom:.15rem}
+.doc-off-hdr p{font-size:.72rem;color:var(--muted)}
+.doc-fr{display:flex;justify-content:space-between;border-bottom:1px dotted var(--b);padding:.35rem 0;font-size:.78rem}
+.doc-fr .dk{color:var(--muted);font-weight:600}
+.doc-fr .dv{font-weight:700}
+.doc-stamp{margin-top:1.8rem;display:flex;justify-content:space-between;align-items:flex-end}
+.doc-sig{text-align:center;font-size:.72rem;color:var(--muted)}
+.stamp-c{width:72px;height:72px;border-radius:50%;border:3px solid rgba(27,94,66,0.28);display:flex;align-items:center;justify-content:center;font-size:.46rem;color:rgba(27,94,66,.4);font-weight:800;text-align:center;line-height:1.3;padding:7px;margin:0 auto 4px}
+/* STATUS */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-state i{font-size:2.2rem;opacity:.25;display:block;margin-bottom:.7rem}
+.empty-state p{font-size:.82rem}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(90px);color:var(--w);padding:.72rem 1.5rem;border-radius:50px;font-size:.79rem;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.2);transition:transform .38s cubic-bezier(.34,1.56,.64,1);z-index:999;display:flex;align-items:center;gap:.45rem;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* HAMBURGER + OVERLAY */
+.ham-btn{display:none;width:42px;height:42px;border-radius:10px;border:1.5px solid var(--b);background:var(--w);align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:1.05rem;flex-shrink:0}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:98;backdrop-filter:blur(2px)}
+
+@media(max-width:860px){
+  .sb{transform:translateX(110%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+  .sb.mob-open{transform:translateX(0);box-shadow:-6px 0 28px rgba(0,0,0,.35)}
+  .main{margin-right:0}
+  .ham-btn{display:flex!important}
+  .topbar{padding:0 1rem}
+  .wil-badge{display:none}
+}
+
+@media(max-width:580px){
+  .content{padding:1rem}
+  /* forms */
+  .field{font-size:16px!important}
+  select.field{font-size:16px!important}
+  .frow{grid-template-columns:1fr}
+  /* service grid */
+  .svc-grid{grid-template-columns:repeat(2,1fr)}
+  .svc-card{padding:.7rem .3rem}
+  .svc-card i{font-size:1rem}
+  .svc-card span{font-size:.65rem}
+  /* buttons */
+  .btn{min-height:48px}
+  .btn-row{flex-direction:column}
+  .btn-row .btn{width:100%}
+  /* calendar */
+  .cal-day{font-size:.68rem;min-height:30px;padding:.3rem .1rem;border-radius:5px}
+  .cal-day-hdr{font-size:.58rem;padding:.2rem 0}
+  .cal-grid{gap:.2rem}
+  /* time slots */
+  .time-grid{grid-template-columns:repeat(3,1fr)}
+  .ts{font-size:.7rem;padding:.48rem .1rem}
+  /* cards */
+  .card{padding:1.1rem}
+  .card h3{font-size:.9rem}
+  /* tabs */
+  .mtab{font-size:.73rem;padding:.58rem .4rem}
+  /* doc grid */
+  .doc-type-grid{grid-template-columns:1fr}
+  /* my appts */
+  .ac{flex-wrap:wrap;gap:.5rem}
+  .ac-meta{display:flex;align-items:center;gap:.6rem;width:100%;justify-content:space-between}
+  .ac-ico{width:38px;height:38px;font-size:.95rem}
+  /* wizard */
+  .wiz{margin-bottom:.9rem}
+  /* topbar */
+  .topbar{height:52px}
+  .tb-title{font-size:.95rem}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sb">
+  <div class="sb-brand">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/7/77/Flag_of_Algeria.svg" class="sb-flag" alt="">
+    <span class="sb-logo">ORDO</span>
+  </div>
+  <div class="sb-user">
+    <div class="sb-av" id="sbav">م</div>
+    <div class="sb-name" id="sbname">مستخدم</div>
+    <div class="sb-type" id="sbtype">مواطن</div>
+    <div class="sb-wil"><i class="fas fa-location-dot" style="color:var(--accent);margin-left:3px;font-size:.65rem"></i><span id="sbwil">—</span></div>
+  </div>
+  <div class="sb-nav">
+    <div class="ngl">الخدمات</div>
+    <a class="ni act" onclick="showPage('appt',this)"><i class="fas fa-calendar-plus"></i>حجز موعد</a>
+    <a class="ni" onclick="showPage('myappts',this)"><i class="fas fa-list-check"></i>مواعيدي</a>
+    <a class="ni" onclick="showPage('docs',this)"><i class="fas fa-file-alt"></i>طلب وثيقة</a>
+    <div class="ngl">الحساب</div>
+    <a class="ni" href="dashboard.html"><i class="fas fa-user-circle"></i>ملفي الشخصي</a>
+    <a class="ni" href="index.html"><i class="fas fa-home"></i>الرئيسية</a>
+  </div>
+  <div class="sb-bot">
+    <button class="logout" onclick="logout()"><i class="fas fa-arrow-right-from-bracket"></i>تسجيل الخروج</button>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="ham-btn" onclick="toggleSidebar()" aria-label="القائمة"><i class="fas fa-bars"></i></button>
+    <span class="tb-title" id="tb-title">حجز موعد</span>
+    <div class="wil-badge"><i class="fas fa-location-dot"></i><span id="top-wil">—</span></div>
+  </div>
+  <div class="content">
+
+    <!-- ===== APPOINTMENTS PAGE ===== -->
+    <div class="page act" id="page-appt">
+      <div class="mtabs">
+        <button class="mtab act" onclick="swApptTab('new',this)"><i class="fas fa-plus-circle"></i>حجز جديد</button>
+        <button class="mtab" onclick="swApptTab('track',this)"><i class="fas fa-search"></i>تتبع الطلب</button>
+      </div>
+
+      <!-- NEW BOOKING -->
+      <div id="tab-new">
+        <!-- WIZARD BAR -->
+        <div class="wiz">
+          <div class="wd act" id="wd1">1</div><div class="wl" id="wl1"></div>
+          <div class="wd" id="wd2">2</div><div class="wl" id="wl2"></div>
+          <div class="wd" id="wd3">3</div><div class="wl" id="wl3"></div>
+          <div class="wd" id="wd4">4</div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div class="card" id="st1">
+          <h3><i class="fas fa-th-large"></i>اختر نوع الخدمة</h3>
+          <div style="font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.8px">المرافق المتوفرة — ولاية <span id="st1-wil">—</span></div>
+          <div class="svc-grid" id="svc-grid">
+            <!-- rendered by JS based on available facilities in wilaya -->
+          </div>
+          <div class="fg" style="margin-top:.4rem">
+            <label>الغرض من الموعد <span class="req">*</span></label>
+            <select class="field" id="ap-purpose">
+              <option value="">-- اختر --</option>
+              <option>استخراج وثيقة</option><option>تجديد وثيقة</option>
+              <option>تسوية وضع إداري</option><option>استشارة قانونية</option>
+              <option>تقديم ملف</option><option>متابعة طلب</option><option>أخرى</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>ملاحظات (اختياري)</label>
+            <textarea class="field" id="ap-notes" style="height:60px;resize:none" placeholder="أي معلومات إضافية..."></textarea>
+          </div>
+          <button class="btn" onclick="goSt(2)"><i class="fas fa-arrow-left"></i>التالي</button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="card" id="st2" style="display:none">
+          <h3><i class="fas fa-map-marker-alt"></i>اختر الفرع</h3>
+          <div class="fg">
+            <label>الولاية</label>
+            <input class="field" id="ap-wil-show" type="text" disabled style="background:var(--off)">
+          </div>
+          <div class="fg">
+            <label>اختر الفرع / المكتب <span class="req">*</span></label>
+            <select class="field" id="ap-branch">
+              <option value="">-- اختر الفرع --</option>
+            </select>
+          </div>
+          <div class="btn-row">
+            <button class="btn out" onclick="goSt(1)"><i class="fas fa-arrow-right"></i>رجوع</button>
+            <button class="btn" onclick="goSt(3)"><i class="fas fa-arrow-left"></i>التالي</button>
+          </div>
+        </div>
+
+        <!-- STEP 3: DATE & TIME -->
+        <div class="card" id="st3" style="display:none">
+          <h3><i class="fas fa-calendar-alt"></i>اختر التاريخ والوقت</h3>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="prevMonth()"><i class="fas fa-chevron-right"></i></button>
+            <span class="cal-month" id="cal-month-lbl"></span>
+            <button class="cal-nav-btn" onclick="nextMonth()"><i class="fas fa-chevron-left"></i></button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="time-section">
+            <div class="time-label" id="time-lbl">الأوقات المتاحة</div>
+            <div class="time-grid" id="time-grid"></div>
+          </div>
+          <div class="btn-row" style="margin-top:1.3rem">
+            <button class="btn out" onclick="goSt(2)"><i class="fas fa-arrow-right"></i>رجوع</button>
+            <button class="btn" onclick="goSt(4)"><i class="fas fa-arrow-left"></i>التالي</button>
+          </div>
+        </div>
+
+        <!-- STEP 4: CONFIRM -->
+        <div class="card" id="st4" style="display:none">
+          <h3><i class="fas fa-check-circle"></i>مراجعة وتأكيد</h3>
+          <div id="ap-summary" style="background:var(--off);border-radius:10px;padding:1.1rem;margin-bottom:1.3rem"></div>
+          <div class="btn-row">
+            <button class="btn out" onclick="goSt(3)"><i class="fas fa-arrow-right"></i>تعديل</button>
+            <button class="btn" onclick="confirmAppt()"><i class="fas fa-check"></i>تأكيد الحجز</button>
+          </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="card" id="st-ok" style="display:none;text-align:center;padding:2.5rem 1.5rem">
+          <div style="width:65px;height:65px;background:rgba(27,94,66,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem;font-size:1.6rem;color:var(--g)"><i class="fas fa-circle-check"></i></div>
+          <h3 style="font-family:'Tajawal',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:.4rem">تم تأكيد موعدك!</h3>
+          <p style="font-size:.82rem;color:var(--muted);margin-bottom:1.2rem">رقم المرجع: <strong id="ap-ref" style="color:var(--g)"></strong></p>
+          <div id="ok-detail" style="background:var(--off);border-radius:10px;padding:1.1rem;margin-bottom:1.2rem;text-align:right;font-size:.8rem"></div>
+          <div class="btn-row" style="justify-content:center">
+            <button class="btn out" onclick="resetAppt()"><i class="fas fa-plus"></i>حجز جديد</button>
+            <button class="btn" onclick="showPage('myappts',null)"><i class="fas fa-list"></i>مواعيدي</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRACK TAB -->
+      <div id="tab-track" style="display:none">
+        <div class="card">
+          <h3><i class="fas fa-search"></i>تتبع طلب</h3>
+          <div class="fg">
+            <label>رقم المرجع</label>
+            <input class="field" id="track-ref" type="text" placeholder="ORD-2025-000001">
+          </div>
+          <button class="btn" onclick="doTrack()"><i class="fas fa-search"></i>بحث</button>
+          <div id="track-res" style="margin-top:1.1rem"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MY APPOINTMENTS ===== -->
+    <div class="page" id="page-myappts">
+      <div class="card">
+        <h3><i class="fas fa-list-check"></i>مواعيدي</h3>
+        <div id="my-appt-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== DOCUMENTS PAGE ===== -->
+    <div class="page" id="page-docs">
+      <div class="mtabs">
+        <button class="mtab act" onclick="swDocTab('req',this)"><i class="fas fa-file-circle-plus"></i>طلب وثيقة</button>
+        <button class="mtab" onclick="swDocTab('list',this)"><i class="fas fa-folder-open"></i>وثائقي</button>
+      </div>
+
+      <div id="dtab-req">
+        <div class="card">
+          <h3><i class="fas fa-file-alt"></i>اختر نوع الوثيقة</h3>
+          <div class="doc-type-grid">
+            <div class="dtc" onclick="selDoc(this,'birth')">
+              <div class="dtc-ic" style="background:rgba(27,94,66,0.08);color:var(--g)"><i class="fas fa-baby"></i></div>
+              <h4>شهادة الميلاد</h4>
+              <p>نسخة رسمية مصادق عليها من البلدية</p>
+            </div>
+            <div class="dtc" onclick="selDoc(this,'res')">
+              <div class="dtc-ic" style="background:rgba(200,168,75,0.1);color:var(--accent)"><i class="fas fa-home"></i></div>
+              <h4>بطاقة الإقامة</h4>
+              <p>وثيقة رسمية تثبت مكان الإقامة</p>
+            </div>
+          </div>
+          <div id="doc-extra" style="display:none">
+            <div class="fg"><label>عدد النسخ</label>
+              <select class="field" id="doc-copies"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+            <div class="fg"><label>الغرض</label>
+              <select class="field" id="doc-purpose">
+                <option>للتوظيف</option><option>للزواج</option><option>للسفر</option>
+                <option>للتسجيل الجامعي</option><option>للإجراءات القانونية</option><option>أخرى</option>
+              </select></div>
+            <div class="btn-row">
+              <button class="btn" onclick="genDoc()"><i class="fas fa-eye"></i>معاينة وتحميل PDF</button>
+              <button class="btn out" onclick="submitDocReq()"><i class="fas fa-paper-plane"></i>إرسال الطلب</button>
+            </div>
+          </div>
+        </div>
+        <div id="doc-prev-area"></div>
+      </div>
+
+      <div id="dtab-list" style="display:none">
+        <div class="card"><h3><i class="fas fa-folder-open"></i>وثائقي المطلوبة</h3><div id="my-docs-list"></div></div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .main -->
+
+<div class="toast" id="toast"><i class="fas fa-circle-check" id="toast-ico"></i><span id="toast-msg"></span></div>
+<script>
+// ─────────────────────────────────────────────
+// CONSTANTS & GLOBALS
+// ─────────────────────────────────────────────
+var U           = null;
+var appts       = [];
+var docsList    = [];
+var selSvc      = null;   // { type, facId, facName, facObj, facilities[] }
+var selBranch   = '';     // option value chosen in step 2
+var selBranchName = '';   // human-readable branch name
+var selDate     = '';     // 'YYYY-MM-DD'
+var selTime     = '';
+var calYear     = new Date().getFullYear();
+var calMonth    = new Date().getMonth();
+var selectedDocType = '';
+
+var AR_MONTHS = ['يناير','فبراير','مارس','أبريل','مايو','يونيو',
+                 'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+var AR_DAYS   = ['أحد','اثن','ثلا','أرب','خمي','جمع','سبت'];
+
+var SVC_ICONS = {
+  'بلدية':'fas fa-building-columns','ولاية':'fas fa-flag',
+  'دائرة':'fas fa-sitemap','سونلغاز':'fas fa-bolt',
+  'سيال':'fas fa-water','محكمة':'fas fa-scale-balanced',
+  'موثق':'fas fa-file-signature','محامي':'fas fa-briefcase',
+  'محضر قضائي':'fas fa-stamp','مهندس معماري':'fas fa-ruler-combined',
+  'مستشفى':'fas fa-hospital','بريد الجزائر':'fas fa-envelope',
+  'مدرسة':'fas fa-school','جامعة':'fas fa-graduation-cap'
+};
+var SVC_COLORS = {
+  'بلدية':'rgba(27,94,66,0.08)','ولاية':'rgba(27,94,66,0.08)',
+  'دائرة':'rgba(27,94,66,0.08)','سونلغاز':'rgba(255,193,7,0.12)',
+  'سيال':'rgba(21,101,192,0.08)','محكمة':'rgba(198,40,40,0.08)',
+  'موثق':'rgba(200,168,75,0.1)','محامي':'rgba(200,168,75,0.1)',
+  'محضر قضائي':'rgba(200,168,75,0.1)','مهندس معماري':'rgba(200,168,75,0.1)',
+  'مستشفى':'rgba(198,40,40,0.07)','بريد الجزائر':'rgba(200,168,75,0.1)',
+  'مدرسة':'rgba(33,150,243,0.08)','جامعة':'rgba(33,150,243,0.08)'
+};
+var DEFAULT_TYPES = [
+  'بلدية','ولاية','دائرة','سونلغاز','سيال',
+  'محكمة','بريد الجزائر','موثق','محامي','مدرسة'
+];
+
+// ─────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────
+function pad(n){ return n < 10 ? '0' + n : String(n); }
+function gv(id){ return (document.getElementById(id)||{}).value||''; }
+function setText(id, val){
+  var e = document.getElementById(id);
+  if(e) e.textContent = val;
+}
+function toast(msg, type){
+  var t   = document.getElementById('toast');
+  var ico = document.getElementById('toast-ico');
+  document.getElementById('toast-msg').textContent = msg;
+  t.style.background = type==='err'  ? '#c62828'
+                     : type==='warn' ? '#e65100'
+                     :                 '#1b5e42';
+  ico.className = type==='err' ? 'fas fa-circle-xmark' : 'fas fa-circle-check';
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+function formatDateAr(s){
+  if(!s) return '—';
+  var p = s.split('-');
+  return parseInt(p[2]) + ' ' + AR_MONTHS[parseInt(p[1])-1] + ' ' + p[0];
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+(function(){
+  var raw = localStorage.getItem('ordo_current');
+  if(!raw){ window.location.href='auth.html'; return; }
+  U = JSON.parse(raw);
+  if(U.role !== 'citizen'){ window.location.href='facility.html'; return; }
+
+  var init = U.fname ? U.fname[0] : 'م';
+  setText('sbav',   init);
+  setText('sbname', (U.fname||'') + ' ' + (U.lname||''));
+  setText('sbtype', U.type || 'مواطن');
+  setText('sbwil',  U.wilaya || '—');
+  setText('top-wil','ولاية ' + (U.wilaya||'—'));
+  setText('st1-wil', U.wilaya || '—');
+
+  var wilEl = document.getElementById('ap-wil-show');
+  if(wilEl) wilEl.value = 'ولاية ' + (U.wilaya||'—');
+
+  appts    = JSON.parse(localStorage.getItem('ordo_appts')    || '[]');
+  docsList = JSON.parse(localStorage.getItem('ordo_docs_list')|| '[]');
+
+  buildSvcGrid();
+  renderCalendar();
+  renderMyAppts();
+  renderMyDocs();
+})();
+
+// ─────────────────────────────────────────────
+// NAV
+// ─────────────────────────────────────────────
+function showPage(name, el){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('act'); });
+  var pg = document.getElementById('page-'+name);
+  if(pg) pg.classList.add('act');
+  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('act'); });
+  if(el) el.classList.add('act');
+  var titles = { appt:'حجز موعد', myappts:'مواعيدي', docs:'طلب وثيقة' };
+  setText('tb-title', titles[name]||'');
+  if(name==='myappts') renderMyAppts();
+  if(name==='docs')    renderMyDocs();
+}
+function logout(){
+  localStorage.removeItem('ordo_current');
+  window.location.href = 'auth.html';
+}
+
+// ─────────────────────────────────────────────
+// SERVICE GRID
+// ─────────────────────────────────────────────
+function buildSvcGrid(){
+  var wilaya     = U.wilaya || '';
+  var facilities = JSON.parse(localStorage.getItem('ordo_facilities')||'[]');
+  var wFacs      = facilities.filter(function(f){ return f.wilaya === wilaya; });
+
+  // Merge default types + any extra registered types
+  var typesSeen = {};
+  var types     = [];
+  DEFAULT_TYPES.forEach(function(t){ typesSeen[t]=true; types.push(t); });
+  wFacs.forEach(function(f){
+    if(!typesSeen[f.type]){ typesSeen[f.type]=true; types.push(f.type); }
+  });
+
+  var grid = document.getElementById('svc-grid');
+  grid.innerHTML = types.map(function(type){
+    var ico          = SVC_ICONS[type] || 'fas fa-building';
+    var hasReg       = wFacs.some(function(f){ return f.type===type; });
+    var verifiedBadge = hasReg
+      ? '<span style="position:absolute;top:3px;left:4px;background:#1b5e42;color:#fff;font-size:.46rem;padding:.1rem .3rem;border-radius:3px;font-weight:800">✓</span>'
+      : '';
+    return '<div class="svc-card" onclick="pickSvc(this,\''+type+'\')">'
+      + verifiedBadge
+      + '<i class="'+ico+'"></i><span>'+type+'</span></div>';
+  }).join('');
+}
+
+function pickSvc(el, type){
+  document.querySelectorAll('.svc-card').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+
+  var wilaya     = U.wilaya || '';
+  var facilities = JSON.parse(localStorage.getItem('ordo_facilities')||'[]');
+  var matching   = facilities.filter(function(f){ return f.wilaya===wilaya && f.type===type; });
+
+  selSvc = {
+    type:       type,
+    facId:      matching.length === 1 ? matching[0].id   : '',
+    facName:    matching.length === 1 ? matching[0].name : type,
+    facObj:     matching.length === 1 ? matching[0]      : null,
+    facilities: matching
+  };
+  buildBranchList(type, matching);
+}
+
+function buildBranchList(type, regFacs){
+  var wilaya  = U.wilaya || '';
+  var sel     = document.getElementById('ap-branch');
+  var opts    = '<option value="">-- اختر الفرع --</option>';
+
+  if(regFacs && regFacs.length){
+    opts += regFacs.map(function(f){
+      return '<option value="'+f.id+'">'+f.name+'</option>';
+    }).join('');
+  } else {
+    // Generate realistic branch names based on the user's wilaya
+    var BRANCHES = {
+      'بلدية':         ['بلدية '+wilaya+' المركز','بلدية '+wilaya+' الشمالية','بلدية '+wilaya+' الجنوبية'],
+      'ولاية':         ['مقر ولاية '+wilaya,'مديرية الخدمات العامة','مديرية التنظيم والشؤون العامة'],
+      'دائرة':         ['دائرة '+wilaya+' المركز','دائرة الشمالية','دائرة الجنوبية'],
+      'سونلغاز':       ['سونلغاز — وحدة '+wilaya+' المركز','سونلغاز — وحدة '+wilaya+' الغربية'],
+      'سيال':          ['سيال — وحدة توزيع '+wilaya,'سيال — فرع '+wilaya],
+      'محكمة':         ['محكمة '+wilaya+' الابتدائية','مجلس قضاء '+wilaya],
+      'بريد الجزائر':  ['مكتب البريد '+wilaya+' المركز','مكتب البريد '+wilaya+' 1','مكتب البريد '+wilaya+' 2'],
+      'موثق':          ['مكتب الموثق بن علي — '+wilaya,'مكتب الموثق معمري — '+wilaya],
+      'محامي':         ['هيئة المحامين — '+wilaya,'مكتب المحامي بوزيان'],
+      'مستشفى':        ['المستشفى العمومي — '+wilaya,'المؤسسة الاستشفائية — '+wilaya],
+      'مدرسة':         ['مدرسة '+wilaya+' الابتدائية','ثانوية '+wilaya+' المركز']
+    };
+    var list = BRANCHES[type] || [type+' — '+wilaya+' المركز'];
+    opts += list.map(function(b, i){
+      return '<option value="ST_'+i+'">'+b+'</option>';
+    }).join('');
+  }
+  sel.innerHTML = opts;
+}
+
+// ─────────────────────────────────────────────
+// WIZARD
+// ─────────────────────────────────────────────
+var apptStep = 1;
+
+function goSt(n){
+  // ── Validation ──
+  if(n === 2){
+    if(!selSvc){
+      toast('اختر نوع الخدمة أولاً','err'); return;
+    }
+    if(!gv('ap-purpose')){
+      toast('اختر الغرض من الموعد','err'); return;
+    }
+    // Sync wilaya display field in step 2
+    var wEl = document.getElementById('ap-wil-show');
+    if(wEl) wEl.value = 'ولاية ' + (U.wilaya||'—');
+  }
+
+  if(n === 3){
+    var bVal = gv('ap-branch');
+    if(!bVal){ toast('اختر الفرع أولاً','err'); return; }
+
+    selBranch = bVal;
+    var bSel  = document.getElementById('ap-branch');
+    selBranchName = bSel
+      ? (bSel.options[bSel.selectedIndex]||{}).text || bVal
+      : bVal;
+
+    // Resolve registered facility object for this branch
+    if(selSvc && selSvc.facilities){
+      var mf = selSvc.facilities.find(function(f){ return f.id===bVal; });
+      if(mf){ selSvc.facId=mf.id; selSvc.facName=mf.name; selSvc.facObj=mf; }
+      else  { selSvc.facId='';    selSvc.facObj=null; }
+    }
+
+    // Reset date & time then rebuild calendar
+    selDate  = '';
+    selTime  = '';
+    // Make sure calYear/calMonth are valid numbers before calling renderCalendar
+    var now  = new Date();
+    if(isNaN(calYear))  calYear  = now.getFullYear();
+    if(isNaN(calMonth)) calMonth = now.getMonth();
+    renderCalendar();
+    // Auto-pick the first available day
+    autoPickFirstDate();
+  }
+
+  if(n === 4){
+    if(!selDate){ toast('اختر تاريخاً للموعد','err'); return; }
+    if(!selTime){ toast('اختر وقتاً للموعد','err');   return; }
+    buildSummary();
+  }
+
+  // ── Switch visible card ──
+  ['st1','st2','st3','st4','st-ok'].forEach(function(id){
+    var e = document.getElementById(id);
+    if(e) e.style.display = 'none';
+  });
+  var target = document.getElementById('st'+n);
+  if(target) target.style.display = 'block';
+  apptStep = n;
+  updateWizard(n);
+}
+
+function updateWizard(n){
+  for(var i=1; i<=4; i++){
+    var d = document.getElementById('wd'+i);
+    if(!d) continue;
+    d.className = 'wd';
+    if(i < n){
+      d.classList.add('done');
+      d.innerHTML = '<i class="fas fa-check" style="font-size:.52rem"></i>';
+    } else if(i === n){
+      d.classList.add('act');
+      d.textContent = i;
+    } else {
+      d.textContent = i;
+    }
+    if(i < 4){
+      var l = document.getElementById('wl'+i);
+      if(l) l.classList.toggle('done', i < n);
+    }
+  }
+}
+
+function autoPickFirstDate(){
+  var cells = document.querySelectorAll('#cal-grid .cal-day:not(.dis):not(.empty)');
+  for(var i=0; i<cells.length; i++){
+    var el     = cells[i];
+    var onclk  = el.getAttribute('onclick') || '';
+    var match  = onclk.match(/'(\d{4}-\d{2}-\d{2})'/);
+    if(match){
+      pickDate(el, match[1], false);
+      break;
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// CALENDAR
+// ─────────────────────────────────────────────
+function getWorkDays(){
+  if(selSvc && selSvc.facObj && Array.isArray(selSvc.facObj.workDays) && selSvc.facObj.workDays.length){
+    return selSvc.facObj.workDays;
+  }
+  return [0,1,2,3,4]; // Sun–Thu default
+}
+
+function renderCalendar(){
+  // Safety: ensure calYear/calMonth are valid
+  var now = new Date();
+  if(!calYear  || isNaN(calYear))  calYear  = now.getFullYear();
+  if(calMonth === undefined || calMonth === null || isNaN(calMonth)) calMonth = now.getMonth();
+
+  setText('cal-month-lbl', AR_MONTHS[calMonth] + ' ' + calYear);
+
+  var firstDay    = new Date(calYear, calMonth, 1).getDay();
+  var daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  var today       = new Date(); today.setHours(0,0,0,0);
+  var workDays    = getWorkDays();
+
+  var html = AR_DAYS.map(function(d){
+    return '<div class="cal-day-hdr">'+d+'</div>';
+  }).join('');
+
+  for(var i=0; i<firstDay; i++) html += '<div class="cal-day empty"></div>';
+
+  for(var d=1; d<=daysInMonth; d++){
+    var dt = new Date(calYear, calMonth, d); dt.setHours(0,0,0,0);
+    var isPast   = dt < today;
+    var isOff    = workDays.indexOf(dt.getDay()) === -1;
+    var isToday  = dt.getTime() === today.getTime();
+    var dateStr  = calYear+'-'+pad(calMonth+1)+'-'+pad(d);
+    var disabled = isPast || isOff;
+    var cls = 'cal-day' + (disabled?' dis':'') + (isToday&&!disabled?' today':'') + (selDate===dateStr?' sel':'');
+    html += '<div class="'+cls+'" onclick="pickDate(this,\''+dateStr+'\','+disabled+')">'+d+'</div>';
+  }
+
+  document.getElementById('cal-grid').innerHTML = html;
+  buildTimeSlots();
+}
+
+function prevMonth(){
+  if(calMonth === 0){ calMonth=11; calYear--; } else { calMonth--; }
+  renderCalendar();
+}
+function nextMonth(){
+  if(calMonth === 11){ calMonth=0; calYear++; } else { calMonth++; }
+  renderCalendar();
+}
+
+function pickDate(el, dateStr, disabled){
+  if(disabled) return;
+  selDate = dateStr;
+  selTime = '';
+  document.querySelectorAll('#cal-grid .cal-day.sel').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  var p = dateStr.split('-');
+  setText('time-lbl', 'الأوقات المتاحة — '+parseInt(p[2])+' '+AR_MONTHS[parseInt(p[1])-1]+' '+p[0]);
+  buildTimeSlots();
+}
+
+// ─────────────────────────────────────────────
+// TIME SLOTS
+// ─────────────────────────────────────────────
+function buildTimeSlots(){
+  var grid = document.getElementById('time-grid');
+  if(!selDate){
+    grid.innerHTML = '<div style="grid-column:span 4;font-size:.76rem;color:var(--muted);padding:.5rem 0">اختر تاريخاً من التقويم أولاً</div>';
+    return;
+  }
+
+  var from     = '08:00';
+  var to       = '16:30';
+  var duration = 30;
+
+  if(selSvc && selSvc.facObj){
+    var fac = selSvc.facObj;
+    if(fac.from)     from     = fac.from;
+    if(fac.to)       to       = fac.to;
+    if(fac.duration) duration = parseInt(fac.duration) || 30;
+  }
+
+  var fParts = from.split(':');
+  var tParts = to.split(':');
+  var fMin   = parseInt(fParts[0])*60 + parseInt(fParts[1]);
+  var tMin   = parseInt(tParts[0])*60 + parseInt(tParts[1]);
+
+  var slots = [];
+  for(var m=fMin; m<tMin; m+=duration){
+    if(m >= 720 && m < 780) continue; // skip lunch 12:00-13:00
+    slots.push(pad(Math.floor(m/60))+':'+pad(m%60));
+  }
+
+  var bookedKey  = (selBranch||'DEFAULT')+'_'+selDate;
+  var bookedObj  = JSON.parse(localStorage.getItem('ordo_booked')||'{}');
+  var bookedList = bookedObj[bookedKey] || [];
+
+  if(!slots.length){
+    grid.innerHTML = '<div style="grid-column:span 4;font-size:.76rem;color:var(--muted);padding:.5rem 0">لا توجد أوقات متاحة</div>';
+    return;
+  }
+
+  grid.innerHTML = slots.map(function(s){
+    var taken = bookedList.indexOf(s) !== -1;
+    var cls   = 'ts'+(taken?' tk':'')+(s===selTime?' sel':'');
+    return '<div class="'+cls+'" onclick="pickTime(this,\''+s+'\','+taken+')">'+s+'</div>';
+  }).join('');
+
+  // Auto-select first available slot
+  if(!selTime){
+    var first = grid.querySelector('.ts:not(.tk)');
+    if(first){
+      selTime = first.textContent.trim();
+      first.classList.add('sel');
+    }
+  }
+}
+
+function pickTime(el, t, taken){
+  if(taken) return;
+  selTime = t;
+  document.querySelectorAll('#time-grid .ts').forEach(function(e){ e.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+// ─────────────────────────────────────────────
+// STEP SUMMARY & CONFIRM
+// ─────────────────────────────────────────────
+function buildSummary(){
+  var rows = [
+    ['نوع الخدمة',     selSvc.type],
+    ['الفرع / المكتب', selBranchName || selBranch || '—'],
+    ['الولاية',        'ولاية '+(U.wilaya||'—')],
+    ['التاريخ',        formatDateAr(selDate)],
+    ['الوقت',          selTime],
+    ['الغرض',          gv('ap-purpose')]
+  ];
+  var html = rows.map(function(r){
+    return '<div class="sum-row"><span class="sk">'+r[0]+'</span><span class="sv">'+r[1]+'</span></div>';
+  }).join('');
+  var notes = gv('ap-notes');
+  if(notes) html += '<div class="sum-row"><span class="sk">ملاحظات</span><span class="sv">'+notes+'</span></div>';
+  document.getElementById('ap-summary').innerHTML = html;
+}
+
+function confirmAppt(){
+
+  /* ══ فحص: هل يوجد حساب مسجّل لهذا النوع في ولاية المستخدم؟ ══ */
+  var facilities = JSON.parse(localStorage.getItem('ordo_facilities') || '[]');
+  var svcType    = selSvc ? selSvc.type : '';
+  var userWilaya = U.wilaya || '';
+
+  var found = facilities.filter(function(f){
+    return f.type === svcType && f.wilaya === userWilaya;
+  });
+
+  if(found.length === 0){
+    showNoFacilityModal(svcType, userWilaya);
+    return;
+  }
+  /* ════════════════════════════════════════════════════════════ */
+
+  var allAppts = JSON.parse(localStorage.getItem('ordo_appts')||'[]');
+  var ref = 'ORD-'+new Date().getFullYear()+'-'+String(allAppts.length+1).padStart(6,'0');
+
+  var appt = {
+    ref:       ref,
+    type:      selSvc.type,
+    facId:     selSvc.facId || '',
+    branch:    selBranchName || selBranch || '—',
+    wilaya:    U.wilaya || '—',
+    date:      selDate,
+    time:      selTime,
+    purpose:   gv('ap-purpose'),
+    notes:     gv('ap-notes'),
+    status:    'pending',
+    created:   new Date().toLocaleDateString('ar-DZ'),
+    userNin:   U.nin,
+    userName:  (U.fname||'')+(U.lname?' '+U.lname:'')
+  };
+
+  // Mark slot as booked so future bookings see it as taken
+  var bookedKey = (selBranch||'DEFAULT')+'_'+selDate;
+  var booked    = JSON.parse(localStorage.getItem('ordo_booked')||'{}');
+  if(!booked[bookedKey]) booked[bookedKey] = [];
+  if(booked[bookedKey].indexOf(selTime) === -1) booked[bookedKey].push(selTime);
+  localStorage.setItem('ordo_booked', JSON.stringify(booked));
+
+  allAppts.push(appt);
+  localStorage.setItem('ordo_appts', JSON.stringify(allAppts));
+  appts = allAppts;
+
+  setText('ap-ref', ref);
+  var html = [
+    ['المرفق',  appt.type+' — '+appt.branch],
+    ['الولاية', 'ولاية '+appt.wilaya],
+    ['الموعد',  formatDateAr(appt.date)+' الساعة '+appt.time],
+    ['الغرض',   appt.purpose],
+    ['الحالة',  'قيد الانتظار']
+  ].map(function(r){
+    return '<div class="sum-row"><span class="sk">'+r[0]+'</span><span class="sv">'+r[1]+'</span></div>';
+  }).join('');
+  document.getElementById('ok-detail').innerHTML = html;
+
+  ['st1','st2','st3','st4'].forEach(function(id){ document.getElementById(id).style.display='none'; });
+  document.getElementById('st-ok').style.display = 'block';
+  updateWizard(5);
+  renderMyAppts();
+  toast('تم تأكيد موعدك بنجاح!');
+}
+
+/* مودال: لا يوجد حساب مسجّل لهذا النوع */
+function showNoFacilityModal(svcType, wilaya){
+  var old = document.getElementById('__nofac_modal');
+  if(old) old.remove();
+
+  var SVC_ICONS = {
+    'بلدية':'fas fa-building-columns','ولاية':'fas fa-flag',
+    'دائرة':'fas fa-sitemap','سونلغاز':'fas fa-bolt',
+    'نسار':'fas fa-water','محكمة':'fas fa-scale-balanced',
+    'موثق':'fas fa-file-signature','محامي':'fas fa-briefcase',
+    'محضر قضائي':'fas fa-stamp','مهندس معماري':'fas fa-ruler-combined',
+    'مستشفى':'fas fa-hospital','بريد الجزائر':'fas fa-envelope',
+    'مدرسة':'fas fa-school','جامعة':'fas fa-graduation-cap'
+  };
+  var ico = SVC_ICONS[svcType] || 'fas fa-building';
+
+  var m = document.createElement('div');
+  m.id = '__nofac_modal';
+  m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:3000;display:flex;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px)';
+
+  m.innerHTML =
+    '<div style="background:#fff;border-radius:20px;padding:2rem 1.8rem;max-width:400px;width:100%;'
+  + 'box-shadow:0 24px 60px rgba(0,0,0,0.2);text-align:center;direction:rtl;font-family:Cairo,Tajawal,sans-serif;'
+  + 'animation:_mslide .3s cubic-bezier(.34,1.56,.64,1)">'
+
+  /* أيقونة المرفق فوق + علامة X */
+  + '<div style="position:relative;width:72px;height:72px;margin:0 auto 1.3rem">'
+  + '<div style="width:72px;height:72px;border-radius:50%;background:#fff3f3;border:2px solid #ffd0d0;'
+  + 'display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#c62828">'
+  + '<i class="fas fa-ban"></i></div>'
+  + '<div style="position:absolute;bottom:-2px;right:-2px;width:26px;height:26px;border-radius:50%;'
+  + 'background:#f0f9f5;border:2px solid #c8ddd6;display:flex;align-items:center;justify-content:center;'
+  + 'font-size:.72rem;color:#1b5e42"><i class="'+ico+'"></i></div>'
+  + '</div>'
+
+  /* النص */
+  + '<h3 style="font-family:Tajawal,sans-serif;font-size:1.1rem;font-weight:800;color:#1a2a22;margin-bottom:.6rem">'
+  + 'لا يوجد حساب مسجّل</h3>'
+
+  + '<p style="font-size:.84rem;color:#5a7066;line-height:2;margin-bottom:1.6rem">'
+  + 'لم يتم تسجيل أي مرفق من نوع<br>'
+  + '<strong style="color:#1a2a22;font-size:.95rem"> '+svcType+' </strong><br>'
+  + 'في <strong style="color:#1b5e42">ولاية '+wilaya+'</strong> حتى الآن.<br>'
+  + '<span style="font-size:.78rem;color:#8aab97">يُرجى اختيار نوع خدمة آخر أو المحاولة لاحقاً.</span>'
+  + '</p>'
+
+  /* زرّان */
+  + '<div style="display:flex;gap:.7rem">'
+  + '<button onclick="document.getElementById(\'__nofac_modal\').remove()" '
+  + 'style="flex:1;padding:.8rem;border:1.5px solid #dde6e2;border-radius:10px;background:#fff;'
+  + 'color:#5a7066;font-family:Cairo,sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .18s" '
+  + 'onmouseover="this.style.borderColor=\'#1b5e42\';this.style.color=\'#1b5e42\'" '
+  + 'onmouseout="this.style.borderColor=\'#dde6e2\';this.style.color=\'#5a7066\'">'
+  + '<i class="fas fa-arrow-right" style="margin-left:5px"></i>رجوع</button>'
+
+  + '<button onclick="document.getElementById(\'__nofac_modal\').remove();goSt(1);resetAppt()" '
+  + 'style="flex:1;padding:.8rem;border:none;border-radius:10px;background:#1b5e42;'
+  + 'color:#fff;font-family:Cairo,sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;transition:all .18s" '
+  + 'onmouseover="this.style.background=\'#133d2c\'" onmouseout="this.style.background=\'#1b5e42\'">'
+  + '<i class="fas fa-th-large" style="margin-left:5px"></i>خدمة أخرى</button>'
+  + '</div>'
+
+  + '</div>';
+
+  /* إضافة animation */
+  if(!document.getElementById('__nofac_style')){
+    var s = document.createElement('style');
+    s.id  = '__nofac_style';
+    s.textContent = '@keyframes _mslide{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}';
+    document.head.appendChild(s);
+  }
+
+  /* إغلاق بالضغط خارج */
+  m.addEventListener('click', function(e){ if(e.target === m) m.remove(); });
+  document.body.appendChild(m);
+}
+  selSvc=null; selBranch=''; selBranchName=''; selDate=''; selTime='';
+  document.querySelectorAll('.svc-card').forEach(function(c){ c.classList.remove('sel'); });
+  var purposeEl = document.getElementById('ap-purpose');
+  var notesEl   = document.getElementById('ap-notes');
+  var branchEl  = document.getElementById('ap-branch');
+  if(purposeEl) purposeEl.value = '';
+  if(notesEl)   notesEl.value   = '';
+  if(branchEl)  branchEl.innerHTML = '<option value="">-- اختر الفرع --</option>';
+  ['st2','st3','st4','st-ok'].forEach(function(id){
+    var e = document.getElementById(id); if(e) e.style.display='none';
+  });
+  var st1 = document.getElementById('st1');
+  if(st1) st1.style.display = 'block';
+  apptStep = 1;
+  calYear  = new Date().getFullYear();
+  calMonth = new Date().getMonth();
+  renderCalendar();
+  updateWizard(1);
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function swApptTab(tab, btn){
+  document.querySelectorAll('#page-appt > .mtabs .mtab').forEach(function(b){ b.classList.remove('act'); });
+  if(btn) btn.classList.add('act');
+  document.getElementById('tab-new').style.display   = tab==='new'   ? 'block' : 'none';
+  document.getElementById('tab-track').style.display = tab==='track' ? 'block' : 'none';
+}
+
+// ─────────────────────────────────────────────
+// TRACK
+// ─────────────────────────────────────────────
+function doTrack(){
+  var ref = gv('track-ref').trim();
+  var res = document.getElementById('track-res');
+  var a   = appts.find(function(x){ return x.ref===ref && x.userNin===U.nin; });
+  if(!a){
+    res.innerHTML = '<div style="background:rgba(198,40,40,.07);border:1px solid rgba(198,40,40,.14);border-radius:9px;padding:.9rem;font-size:.8rem;color:var(--red)"><i class="fas fa-circle-xmark"></i> رقم المرجع غير موجود.</div>';
+    return;
+  }
+  var sMap = { pending:'قيد الانتظار', confirmed:'مؤكد', rejected:'مرفوض', cancelled:'ملغى' };
+  var sCls = { pending:'pnd', confirmed:'cnf', rejected:'cnl', cancelled:'cnl' };
+  var html = '<div style="background:var(--off);border:1px solid var(--b);border-radius:10px;padding:1.1rem;font-size:.8rem">';
+  [['المرفق',a.type+' — '+a.branch],['الولاية','ولاية '+a.wilaya],
+   ['الموعد',formatDateAr(a.date)+' — '+a.time],['الغرض',a.purpose]
+  ].forEach(function(r){
+    html += '<div class="sum-row"><span class="sk">'+r[0]+'</span><span class="sv">'+r[1]+'</span></div>';
+  });
+  html += '<div class="sum-row"><span class="sk">الحالة</span><span><span class="bdg '+(sCls[a.status]||'pnd')+'">'+(sMap[a.status]||a.status)+'</span></span></div>';
+  html += '</div>';
+  res.innerHTML = html;
+}
+
+// ─────────────────────────────────────────────
+// MY APPOINTMENTS
+// ─────────────────────────────────────────────
+function renderMyAppts(){
+  var myAppts = appts.filter(function(a){ return a.userNin===U.nin; }).slice().reverse();
+  var el = document.getElementById('my-appt-list');
+  if(!myAppts.length){
+    el.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-xmark"></i><p>لا توجد مواعيد بعد</p></div>';
+    return;
+  }
+  var sMap = { pending:'قيد الانتظار', confirmed:'مؤكد', rejected:'مرفوض', cancelled:'ملغى' };
+  var sCls = { pending:'pnd', confirmed:'cnf', rejected:'cnl', cancelled:'cnl' };
+  el.innerHTML = myAppts.map(function(a){
+    var ico = SVC_ICONS[a.type] || 'fas fa-calendar';
+    var col = SVC_COLORS[a.type] || 'rgba(27,94,66,0.08)';
+    return '<div class="ac">'
+      +'<div class="ac-ico" style="background:'+col+';color:var(--g)"><i class="'+ico+'"></i></div>'
+      +'<div class="ac-info">'
+      +'<h4>'+a.type+' — '+a.purpose+'</h4>'
+      +'<p>'+(a.branch||'—')+' · ولاية '+(a.wilaya||'—')+'</p>'
+      +'<span class="bdg '+(sCls[a.status]||'pnd')+'">'+(sMap[a.status]||a.status)+'</span>'
+      +'</div>'
+      +'<div class="ac-meta">'
+      +'<div class="ac-date">'+formatDateAr(a.date)+'</div>'
+      +'<div class="ac-time">'+a.time+'</div>'
+      +(a.status==='pending'
+        ? '<button style="margin-top:.35rem;font-size:.68rem;padding:.22rem .55rem;border:1px solid var(--red);border-radius:6px;color:var(--red);background:none;cursor:pointer;font-family:Cairo,sans-serif" onclick="cancelAppt(\''+a.ref+'\')">إلغاء</button>'
+        : '')
+      +'</div></div>';
+  }).join('');
+}
+
+function cancelAppt(ref){
+  if(!confirm('هل تريد إلغاء هذا الموعد؟')) return;
+  var allAppts = JSON.parse(localStorage.getItem('ordo_appts')||'[]');
+  var idx = allAppts.findIndex(function(a){ return a.ref===ref; });
+  if(idx >= 0){ allAppts[idx].status='cancelled'; appts=allAppts; }
+  localStorage.setItem('ordo_appts', JSON.stringify(allAppts));
+  renderMyAppts();
+  toast('تم إلغاء الموعد','warn');
+}
+
+// ─────────────────────────────────────────────
+// DOCUMENTS
+// ─────────────────────────────────────────────
+function swDocTab(tab, btn){
+  document.querySelectorAll('#page-docs .mtab').forEach(function(b){ b.classList.remove('act'); });
+  if(btn) btn.classList.add('act');
+  document.getElementById('dtab-req').style.display  = tab==='req'  ? 'block' : 'none';
+  document.getElementById('dtab-list').style.display = tab==='list' ? 'block' : 'none';
+  if(tab==='list') renderMyDocs();
+}
+
+function selDoc(el, type){
+  document.querySelectorAll('.dtc').forEach(function(c){ c.classList.remove('sel'); });
+  el.classList.add('sel');
+  selectedDocType = type;
+  document.getElementById('doc-extra').style.display    = 'block';
+  document.getElementById('doc-prev-area').style.display = 'none';
+}
+
+function docRow(k,v){
+  return '<div class="doc-fr"><span class="dk">'+k+'</span><span class="dv">'+v+'</span></div>';
+}
+
+function genDoc(){
+  if(!selectedDocType){ toast('اختر نوع الوثيقة أولاً','err'); return; }
+  var area  = document.getElementById('doc-prev-area');
+  var titles= {birth:'شهادة الميلاد',res:'بطاقة إقامة'};
+  var title = titles[selectedDocType]||selectedDocType;
+  var body  = selectedDocType==='birth' ? buildBirth() : buildRes();
+  area.style.display='block';
+  area.innerHTML=
+    '<div class="doc-prev">'
+    +'<div class="doc-prev-hdr">'
+    +'<div style="display:flex;align-items:center;gap:.6rem">'
+    +'<i class="fas fa-file-contract" style="font-size:1.1rem"></i>'
+    +'<h4 style="font-size:.95rem;font-weight:800">'+title+'</h4></div>'
+    +'<button onclick="printDoc()" style="display:flex;align-items:center;gap:.4rem;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:7px;padding:.4rem 1rem;font-family:Cairo,sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s" onmouseover="this.style.background=\'rgba(255,255,255,0.25)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.15)\'">'
+    +'<i class="fas fa-file-pdf"></i>استخراج PDF</button>'
+    +'</div>'
+    +'<div style="padding:1.4rem 1.4rem 1rem">'
+    +'<div id="doc-content">'+body+'</div>'
+    +'</div></div>';
+  area.scrollIntoView({behavior:'smooth'});
+  toast('تم توليد الوثيقة — اضغط استخراج PDF');
+}
+
+/* ---- shared helpers ---- */
+function dv(k,v){ // doc value row
+  return '<tr>'
+    +'<td style="padding:7px 10px;font-size:9.5pt;color:#4a5a52;font-weight:600;width:42%;border-bottom:1px solid #e8ede9;white-space:nowrap">'+k+'</td>'
+    +'<td style="padding:7px 10px;font-size:9.5pt;font-weight:800;color:#1a2a22;border-bottom:1px solid #e8ede9">'+v+'</td>'
+    +'</tr>';
+}
+function ds(title){ // section separator
+  return '<tr><td colspan="2" style="padding:10px 10px 4px;font-size:8pt;font-weight:800;color:#1b5e42;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #1b5e42;background:#f8faf8">'+title+'</td></tr>';
+}
+
+function buildBirth(){
+  var u=U;
+  /* ── auto-fill missing fields ── */
+  if(!u.fnFr||!u.lnFr||!u.birthCertNum){
+    var ARABIC_TO_LATIN={
+      'محمد':'Mohamed','أحمد':'Ahmed','عبد الله':'Abdallah','عبد العزيز':'Abdelaziz',
+      'يوسف':'Youcef','علي':'Ali','عمر':'Omar','حسين':'Houcine','إبراهيم':'Ibrahim',
+      'خالد':'Khaled','كريم':'Karim','رضا':'Rida','رياض':'Riadh','نبيل':'Nabil',
+      'سامي':'Sami','وليد':'Walid','بلال':'Bilal','زكريا':'Zakaria','هارون':'Harun',
+      'فاطمة':'Fatima','عائشة':'Aicha','زينب':'Zeineb','مريم':'Meriem','أمينة':'Amina',
+      'سارة':'Sara','لينا':'Lina','ياسمين':'Yasmine','نور':'Nour','هناء':'Hana',
+      'بن علي':'Ben Ali','بوزيد':'Bouzid','حمودي':'Hamoudi','مسعود':'Masoud',
+      'قادري':'Kadri','بلعباس':'Belabbas','بن شريف':'Bencherif','دريدي':'Dridi',
+      'حارك':'Harek','بوعزيز':'Bouaziz','منصوري':'Mansouri','زروق':'Zerrouk'
+    };
+    function latinize(ar){
+      if(!ar)return '';
+      if(ARABIC_TO_LATIN[ar])return ARABIC_TO_LATIN[ar];
+      // simple transliteration fallback
+      var map={'أ':'A','ا':'a','ب':'B','ت':'T','ث':'Th','ج':'Dj','ح':'H','خ':'Kh','د':'D','ذ':'Z','ر':'R','ز':'Z','س':'S','ش':'Ch','ص':'S','ض':'D','ط':'T','ظ':'Z','ع':'','غ':'Gh','ف':'F','ق':'K','ك':'K','ل':'L','م':'M','ن':'N','ه':'H','و':'W','ي':'I','ى':'a','ة':'a','ء':'',' ':' '};
+      var res='';for(var i=0;i<ar.length;i++){res+=(map[ar[i]]!==undefined?map[ar[i]]:ar[i]);}
+      return res.replace(/[^\x00-\x7F]/g,'').replace(/\s+/g,' ').trim().toUpperCase();
+    }
+    if(!u.fnFr) u.fnFr = latinize(u.fname)||u.fname||'—';
+    if(!u.lnFr) u.lnFr = latinize(u.lname)||u.lname||'—';
+    if(!u.birthCertNum){
+      var yr=u.dob?u.dob.substring(0,4):(new Date().getFullYear()-25);
+      u.birthCertNum = Math.floor(100+Math.random()*900)+'/'+yr;
+    }
+    // persist back
+    var users=JSON.parse(localStorage.getItem('ordo_users')||'[]');
+    var idx=users.findIndex(function(x){return x.nin===u.nin;});
+    if(idx>=0){users[idx].fnFr=u.fnFr;users[idx].lnFr=u.lnFr;users[idx].birthCertNum=u.birthCertNum;}
+    localStorage.setItem('ordo_users',JSON.stringify(users));
+    localStorage.setItem('ordo_current',JSON.stringify(u));
+  }
+  if(!u.gender) u.gender='ذكر';
+
+  var t=new Date().toLocaleDateString('fr-DZ');
+  var refNum=u.birthCertNum||'—';
+  var dobDisplay=u.dob||'—';
+  var dobFr='';
+  if(u.dob){
+    try{
+      var dp=new Date(u.dob);
+      var mn=['يناير','فبراير','مارس','أبريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+      var mnFr=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+      dobDisplay=dp.getDate()+' '+mn[dp.getMonth()]+' '+dp.getFullYear();
+      dobFr=dp.getDate()+'/'+String(dp.getMonth()+1).padStart(2,'0')+'/'+dp.getFullYear();
+    }catch(e){}
+  }
+function getCurrentTimeArabic() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes().toString().padStart(2, '0');
+
+  let period = hours >= 12 ? "مساءً" : "صباحًا";
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+
+  const arabicNumbers = ["الواحدة","الثانية","الثالثة","الرابعة","الخامسة","السادسة","السابعة","الثامنة","التاسعة","العاشرة","الحادية عشرة","الثانية عشرة"];
+
+  const hourText = arabicNumbers[hours - 1];
+
+  // نحفظ النص الكامل في متغير t
+  const t = `في الساعة ${hourText} <span style="font-size:8pt">(${hours}:${minutes} ${period})</span>`;
+
+  return t;
+}
+
+// متغير آخر يحتوي على النص بقوة <strong>
+const strongTime = `<strong>${getCurrentTimeArabic()}</strong>`;
+
+  var commune=u.pob||u.wilaya||'—';
+  var wilaya=u.wilaya||'—';
+  var fullNameAr=(u.fname||'—')+' '+(u.lname||'—');
+  var fullNameFr=(u.fnFr||'—')+' '+(u.lnFr||'—');
+  var fatherFullAr=(u.fatherFname||'—')+' '+(u.fatherLname||u.lname||'—');
+  var motherFullAr=(u.motherFname||'—')+' '+(u.motherLname||'—');
+  var fatherFr=latinize?((u.fatherFname?latinize(u.fatherFname):'')+' '+(u.lnFr||'')).trim():'—';
+  var motherFr=u.motherFname?latinize(u.motherFname)+' '+(latinize(u.motherLname)||''):'—';
+  function latinize(ar){if(!ar)return '';var ARABIC_TO_LATIN={'محمد':'Mohamed','أحمد':'Ahmed','عبد الله':'Abdallah','عبد العزيز':'Abdelaziz','يوسف':'Youcef','علي':'Ali','عمر':'Omar','حسين':'Houcine','إبراهيم':'Ibrahim','خالد':'Khaled','كريم':'Karim','رضا':'Rida','رياض':'Riadh','نبيل':'Nabil','سامي':'Sami','وليد':'Walid','بلال':'Bilal','زكريا':'Zakaria','هارون':'Harun','فاطمة':'Fatima','عائشة':'Aicha','زينب':'Zeineb','مريم':'Meriem','أمينة':'Amina','سارة':'Sara','لينا':'Lina','ياسمين':'Yasmine','نور':'Nour','هناء':'Hana'};if(ARABIC_TO_LATIN[ar])return ARABIC_TO_LATIN[ar];var map={'أ':'A','ا':'a','ب':'B','ت':'T','ث':'Th','ج':'Dj','ح':'H','خ':'Kh','د':'D','ذ':'Z','ر':'R','ز':'Z','س':'S','ش':'Ch','ص':'S','ض':'D','ط':'T','ظ':'Z','ع':'','غ':'Gh','ف':'F','ق':'K','ك':'K','ل':'L','م':'M','ن':'N','ه':'H','و':'W','ي':'I','ى':'a','ة':'a','ء':'',' ':' '};var res='';for(var i=0;i<ar.length;i++){res+=(map[ar[i]]!==undefined?map[ar[i]]:ar[i]);}return res.replace(/[^\x00-\x7F]/g,'').replace(/\s+/g,' ').trim().toUpperCase();}
+
+  // Render exactly like the authentic Algerian birth certificate image
+  var html = [
+    '<div style="font-family:\'Times New Roman\',Times,serif;direction:rtl;color:#000;background:#fff;max-width:920px;margin:0 auto;padding:40px;border:1px solid #ccc">',
+
+    /* TOP HEADER - Arabic state title */
+    '<div style="text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:8px">',
+    '<div style="font-size:11pt;font-weight:bold;font-family:\'Traditional Arabic\',\'Times New Roman\',serif">الجمهورية الجزائرية الديمقراطية الشعبية</div>',
+    '<div style="font-size:8.5pt;color:#333;direction:ltr;text-align:center">République Algérienne Démocratique et Populaire</div>',
+    '</div>',
+
+    /* TWO COLUMN HEADER */
+    '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;font-size:8.5pt">',
+    '<div style="text-align:right">',
+    '<div style="font-weight:bold">وزارة الداخلية والجماعات المحلية</div>',
+    '<div>ولاية: '+wilaya+'</div>',
+    '<div>بلدية: '+commune+'</div>',
+    '</div>',
+    '<div style="text-align:left;direction:ltr">',
+    '<div style="font-weight:bold">Ministère de l\'Intérieur</div>',
+    '<div>السجل الوطني للحالة المدنية</div>',
+    '<div style="font-size:8pt">Registre National d\'État Civil</div>',
+    '<div style="font-size:8pt">pour la Famille Civile</div>',
+    '</div>',
+    '</div>',
+
+    /* TITLE */
+    '<div style="text-align:center;margin:10px 0">',
+    '<div style="font-size:17pt;font-weight:bold;font-family:\'Traditional Arabic\',serif;letter-spacing:1px">شهـادة المـيلاد</div>',
+    '<div style="font-size:9.5pt;font-weight:bold;direction:ltr">نسخة إلكترونية — Copie Electronique</div>',
+    '</div>',
+
+    /* REF LINE */
+    '<div style="display:flex;justify-content:space-between;font-size:8.5pt;border:1px solid #ccc;padding:4px 8px;margin-bottom:8px;background:#f9f9f9">',
+    '<span>رقم الشهادة: <strong>'+refNum+'</strong></span>',
+    '<span>رقم السجل (1): ............</span>',
+    '</div>',
+
+    /* INTRO TEXT */
+    '<div style="font-size:9pt;margin-bottom:6px;direction:rtl;line-height:1.8">',
+    'في الساعة ......<strong>'+getCurrentTimeArabic()+'</strong>....... <span style="font-size:8pt"><strong></strong></span>',
+    '<br>ببلدية: ......<strong>'+commune+'</strong>,....... ولاية <strong>'+wilaya+'</strong>',
+    '<br>الجنس: <strong>'+(u.gender||'ذكر')+'',
+    '</div>',
+
+    /* BODY TABLE */
+    '<table style="width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:6px">',
+    '<tr>',
+    '<td style="width:50%;padding:3px 6px;border:1px solid #ccc;vertical-align:top">',
+    '<span style="font-size:8pt;color:#555">الاسم / Nom :</span><br>',
+    '<strong style="font-size:11pt">'+fullNameFr+'</strong>',
+    '<br><span style="font-size:8.5pt;font-family:\'Traditional Arabic\',serif">'+fullNameAr+'</span>',
+    '</td>',
+    '<td style="padding:3px 6px;border:1px solid #ccc;vertical-align:top">',
+    '<span style="font-size:8pt;color:#555">تاريخ الميلاد / Date de Naissance :</span><br>',
+    '<strong>'+dobDisplay+'</strong> &nbsp;/&nbsp; <span dir="ltr">'+dobFr+'</span>',
+    '</td>',
+    '</tr>',
+    '<tr>',
+    '<td style="padding:3px 6px;border:1px solid #ccc;vertical-align:top" colspan="2">',
+    '<span style="font-size:8pt;color:#555">مكان الميلاد / Lieu de Naissance :</span>&nbsp;',
+    '<strong>'+commune+'</strong> &nbsp;—&nbsp; ولاية <strong>'+wilaya+'</strong>',
+    '</td>',
+    '</tr>',
+    '<tr>',
+    '<td style="padding:8px 6px;border:1px solid #ccc;vertical-align:top">',
+    '<span style="font-size:8pt;color:#555">الأب / Père :</span><br>',
+    '<strong>'+'</strong>',
+    '<br><span style="font-size:8.5pt;font-family:\'Traditional Arabic\',serif">'+fatherFullAr+'</span>',
+    '</td>',
+    '<td style="padding:3px 6px;border:1px solid #ccc;vertical-align:top">',
+    '<span style="font-size:8pt;color:#555">الأم / Mère :</span><br>',
+    '<strong>'+'</strong>',
+    '<br><span style="font-size:8.5pt;font-family:\'Traditional Arabic\',serif">'+motherFullAr+'</span>',
+    '</td>',
+    '</tr>',
+    '<tr>',
+    '<td style="padding:3px 6px;border:1px solid #ccc" colspan="2">',
+    '<span style="font-size:8pt;color:#555">NIN :</span>&nbsp;<strong style="direction:ltr;font-family:monospace">'+(u.nin||'—')+'</strong>',
+    '</td>',
+    '</tr>',
+    '</table>',
+
+    /* حُرر في */
+    '<div style="font-size:9pt;direction:rtl;margin-bottom:4px">',
+    'حُرِّر بـ <strong>'+commune+'</strong> في ........<strong>'+t+'</strong>.....',
+    '</div>',
+    '<div style="font-size:8.5pt;direction:ltr;margin-bottom:8px">',
+    'Dressé à <strong>'+commune+'</strong>, le ......<strong>'+t+'</strong>.......',
+    '</div>',
+
+ 
+    /* SIGNATURES */
+    '<div style="display:flex;justify-content:space-between;margin-top:12px;font-size:8.5pt">',
+    '<div style="text-align:right">',
+    '<div style="margin-bottom:4px">طابط ضابط الحالة المدنية البلدية</div>',
+    '<div style="width:120px;height:55px;border:1px dashed #bbb;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#999;margin:4px auto">الختم الرسمي</div>',
+    '</div>',
+    '<div style="text-align:center">',
+   
+    '<div style="font-size:8.5pt;font-weight:bold">الكتابة بالأحرف اللاتينية / الكتابة باللاتين من اللقب الأبجدي</div>',
+    '<div style="font-size:11pt;direction:ltr;font-weight:bold;margin-top:4px">'+fullNameFr+'</div>',
+
+
+    '</div>',
+    '</div>',
+
+    /* QR + footer */
+    '<div style="display:flex;align-items:center;gap:10px;margin-top:12px;border-top:1px solid #ccc;padding-top:8px">',
+    '<div style="width:80px;height:80px;border:1px solid #ccc;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">⬛</div>',
+    '<div style="font-size:7.5pt;color:#555;direction:ltr;line-height:1.7">',
+    '* مستخرج من السجل الوطني للحالة المدنية<br>',
+
+    '@ مستخرج من السجل الوطني للحالة المدنية<br>',
+    '<strong>الرقم الصفحة: 7</strong>',
+    '</div>',
+    '</div>',
+
+    '</div>'
+  ].join('');
+  return html;
+}
+
+function buildRes(){
+  var u=U;
+  if(!u.fnFr||!u.lnFr||!u.birthCertNum){
+    var _lat=function(ar){if(!ar)return '';var AL={'\u0645\u062d\u0645\u062f':'Mohamed','\u0623\u062d\u0645\u062f':'Ahmed','\u0639\u0628\u062f \u0627\u0644\u0639\u0632\u064a\u0632':'Abdelaziz','\u064a\u0648\u0633\u0641':'Youcef','\u0639\u0644\u064a':'Ali','\u0639\u0645\u0631':'Omar','\u062d\u0633\u064a\u0646':'Houcine','\u0641\u0627\u0637\u0645\u0629':'Fatima','\u0639\u0627\u0626\u0634\u0629':'Aicha','\u0632\u064a\u0646\u0628':'Zeineb','\u0645\u0631\u064a\u0645':'Meriem','\u0623\u0645\u064a\u0646\u0629':'Amina','\u0633\u0627\u0631\u0629':'Sara','\u062d\u0627\u0631\u0643':'Harek','\u0628\u0648\u0639\u0632\u064a\u0632':'Bouaziz'};if(AL[ar])return AL[ar];var map={'\u0623':'A','\u0627':'a','\u0628':'B','\u062a':'T','\u062c':'Dj','\u062d':'H','\u062e':'Kh','\u062f':'D','\u0631':'R','\u0632':'Z','\u0633':'S','\u0634':'Ch','\u0635':'S','\u0637':'T','\u0639':'','\u063a':'Gh','\u0641':'F','\u0642':'K','\u0643':'K','\u0644':'L','\u0645':'M','\u0646':'N','\u0647':'H','\u0648':'W','\u064a':'I','\u0649':'a','\u0629':'a','\u0621':'',' ':' '};var res='';for(var i=0;i<ar.length;i++){res+=(map[ar[i]]!==undefined?map[ar[i]]:ar[i]);}return res.replace(/[^\x00-\x7F]/g,'').replace(/\s+/g,' ').trim().toUpperCase();};
+    if(!u.fnFr) u.fnFr=_lat(u.fname)||u.fname||'\u2014';
+    if(!u.lnFr) u.lnFr=_lat(u.lname)||u.lname||'\u2014';
+    if(!u.birthCertNum){var yr=u.dob?u.dob.substring(0,4):(new Date().getFullYear()-25);u.birthCertNum=Math.floor(100+Math.random()*900)+'/'+yr;}
+    var users=JSON.parse(localStorage.getItem('ordo_users')||'[]');
+    var idx=users.findIndex(function(x){return x.nin===u.nin;});
+    if(idx>=0){users[idx].fnFr=u.fnFr;users[idx].lnFr=u.lnFr;users[idx].birthCertNum=u.birthCertNum;}
+    localStorage.setItem('ordo_users',JSON.stringify(users));
+    localStorage.setItem('ordo_current',JSON.stringify(u));
+  }
+  if(!u.gender) u.gender='\u0630\u0643\u0631';
+  var t=new Date().toLocaleDateString('ar-DZ');
+  var tFr=new Date().toLocaleDateString('fr-DZ');
+  var refNum='IQ-'+new Date().getFullYear()+'-'+(u.nin||'').substring(0,6);
+  var dobDisplay=u.dob||'\u2014';var dobFr='';
+  if(u.dob){try{var dp=new Date(u.dob);var mn=['\u064a\u0646\u0627\u064a\u0631','\u0641\u0628\u0631\u0627\u064a\u0631','\u0645\u0627\u0631\u0633','\u0623\u0628\u0631\u064a\u0644','\u0645\u0627\u064a','\u062c\u0648\u0627\u0646','\u062c\u0648\u064a\u0644\u064a\u0629','\u0623\u0648\u062a','\u0633\u0628\u062a\u0645\u0628\u0631','\u0623\u0643\u062a\u0648\u0628\u0631','\u0646\u0648\u0641\u0645\u0628\u0631','\u062f\u064a\u0633\u0645\u0628\u0631'];dobDisplay=dp.getDate()+' '+mn[dp.getMonth()]+' '+dp.getFullYear();dobFr=dp.getDate()+'/'+(dp.getMonth()+1)+'/'+dp.getFullYear();}catch(e){}}
+  var commune=u.pob||u.wilaya||'\u2014';
+  var wilaya=u.wilaya||'\u2014';
+  var fullNameAr=(u.fname||'\u2014')+' '+(u.lname||'\u2014');
+  var fullNameFr=(u.fnFr||'\u2014')+' '+(u.lnFr||'\u2014');
+  var fatherFullAr=(u.fatherFname||'\u2014')+' '+(u.fatherLname||u.lname||'\u2014');
+  var motherFullAr=(u.motherFname||'\u2014')+' '+(u.motherLname||'\u2014');
+  var h='<div style="font-family:Times New Roman,Times,serif;direction:rtl;color:#000;background:#fff;max-width:700px;margin:0 auto;padding:18px;border:1px solid #999">';
+  h+='<div style="text-align:center;border-bottom:3px double #1565c0;padding-bottom:8px;margin-bottom:8px"><div style="font-size:11pt;font-weight:bold">\u0627\u0644\u062c\u0645\u0647\u0648\u0631\u064a\u0629 \u0627\u0644\u062c\u0632\u0627\u0626\u0631\u064a\u0629 \u0627\u0644\u062f\u064a\u0645\u0642\u0631\u0627\u0637\u064a\u0629 \u0627\u0644\u0634\u0639\u0628\u064a\u0629</div><div style="font-size:8pt;color:#444;direction:ltr">R\xe9publique Alg\xe9rienne D\xe9mocratique et Populaire</div></div>';
+  h+='<div style="display:flex;justify-content:space-between;font-size:8.5pt;margin-bottom:8px"><div style="text-align:right"><div style="font-weight:bold">\u0648\u0632\u0627\u0631\u0629 \u0627\u0644\u062f\u0627\u062e\u0644\u064a\u0629</div><div>\u0648\u0644\u0627\u064a\u0629: '+wilaya+'</div><div>\u0628\u0644\u062f\u064a\u0629 '+commune+'</div></div><div style="text-align:left;direction:ltr;font-size:8pt"><strong>\u0627\u0644\u0633\u062c\u0644 \u0627\u0644\u0648\u0637\u0646\u064a \u0644\u0644\u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062f\u0646\u064a\u0629</strong><br>Registre National d\'\u00c9tat Civil<br><span style="color:#1565c0">Commune: '+commune+'</span></div></div>';
+  h+='<div style="text-align:center;margin:10px 0;padding:6px;border-top:2px solid #1565c0;border-bottom:2px solid #1565c0"><div style="font-size:18pt;font-weight:bold;letter-spacing:2px">\u0634\u0647\u0627\u062f\u0629 \u0625\u0642\u0627\u0645\u0629</div><div style="font-size:9pt;direction:ltr;color:#444">Certificat de R\xe9sidence</div></div>';
+  h+='<div style="font-size:9pt;margin:10px 0 6px;line-height:1.9"><div>\u0646\u064f\u0634\u0647\u062f \u0646\u062d\u0646 \u0627\u0644\u0645\u0648\u0642\u0639\u0648\u0646 \u0623\u062f\u0646\u0627\u0647 \u0623\u0646:</div><div style="margin-right:20px"><strong>\u0627\u0644\u0633\u064a\u062f/\u0629: '+fullNameAr+'</strong></div><div style="margin-right:20px;direction:ltr;font-weight:bold">'+fullNameFr+'</div></div>';
+  h+='<table style="width:100%;border-collapse:collapse;font-size:9pt;margin-bottom:8px">';
+  h+='<tr><td style="width:40%;padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0645\u064a\u0644\u0627\u062f / Date de naissance</td><td style="padding:4px 8px;border:1px solid #bbb"><strong>'+dobDisplay+'</strong> '+dobFr+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u0645\u0643\u0627\u0646 \u0627\u0644\u0645\u064a\u0644\u0627\u062f / Lieu de naissance</td><td style="padding:4px 8px;border:1px solid #bbb"><strong>'+commune+'</strong></td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u0627\u0644\u062c\u0646\u0633\u064a\u0629 / Nationalit\xe9</td><td style="padding:4px 8px;border:1px solid #bbb">\u062c\u0632\u0627\u0626\u0631\u064a\u0629 \u2014 Alg\xe9rienne</td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u0627\u0644\u062c\u0646\u0633 / Sexe</td><td style="padding:4px 8px;border:1px solid #bbb">'+(u.gender||'\u0630\u0643\u0631')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u0627\u0633\u0645 \u0627\u0644\u0623\u0628 / P\xe8re</td><td style="padding:4px 8px;border:1px solid #bbb"><strong>'+fatherFullAr+'</strong></td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u0627\u0633\u0645 \u0627\u0644\u0623\u0645 / M\xe8re</td><td style="padding:4px 8px;border:1px solid #bbb"><strong>'+motherFullAr+'</strong></td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">NIN</td><td style="padding:4px 8px;border:1px solid #bbb;direction:ltr">'+(u.nin||'\u2014')+'</td></tr>';
+  h+='<tr><td style="padding:4px 8px;border:1px solid #bbb;font-size:8pt;color:#555">\u0645\u062d\u0644 \u0627\u0644\u0625\u0642\u0627\u0645\u0629 / Adresse</td><td style="padding:4px 8px;border:1px solid #bbb"><strong>'+commune+'\u060c \u0648\u0644\u0627\u064a\u0629 '+wilaya+'</strong></td></tr>';
+  h+='</table>';
+  h+='<div style="font-size:9pt;line-height:2;border:1px solid #ccc;padding:8px 12px;background:#fafafa;margin-bottom:10px">\u064a\u064f\u0642\u064a\u0645 \u0641\u0639\u0644\u064a\u0627\u064b \u0628\u0645\u0646\u0637\u0642\u0629 <strong>'+commune+'</strong>\u060c \u0648\u0644\u0627\u064a\u0629 <strong>'+wilaya+'</strong>.<br>\u0648\u0642\u062f \u0633\u064f\u0644\u0651\u0645\u062a \u0644\u0647/\u0644\u0647\u0627 \u0647\u0630\u0647 \u0627\u0644\u0648\u062b\u064a\u0642\u0629 \u0628\u0646\u0627\u0621\u064b \u0639\u0644\u0649 \u0637\u0644\u0628\u0647/\u0647\u0627.</div>';
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;font-size:8.5pt;margin-top:10px">';
+  h+='<div style="text-align:center"><div style="width:85px;height:85px;border:2px solid rgba(21,101,192,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6.5pt;color:rgba(21,101,192,.5);text-align:center;line-height:1.4;margin:0 auto 4px">\u0627\u0644\u062e\u062a\u0645<br>\u0627\u0644\u0631\u0633\u0645\u064a</div><div style="font-size:7.5pt;color:#555">\u062e\u062a\u0645 \u0627\u0644\u0628\u0644\u062f\u064a\u0629</div></div>';
+  h+='<div style="text-align:center"><div>\u062d\u064f\u0631\u0651\u0650\u0631 \u0628\u0640 <strong>'+commune+'</strong></div><div>\u0628\u062a\u0627\u0631\u064a\u062e: <strong>'+t+'</strong></div><div style="direction:ltr;font-size:8pt">Le: '+tFr+'</div><div style="margin-top:20px;font-weight:bold">\u0631\u0626\u064a\u0633 \u0627\u0644\u0645\u062c\u0644\u0633 \u0627\u0644\u0634\u0639\u0628\u064a \u0627\u0644\u0628\u0644\u062f\u064a</div><div style="font-size:8pt;direction:ltr">Pr\xe9sident de l\'APC</div></div>';
+  h+='<div style="text-align:center"><div style="width:85px;height:85px;border:2px dashed #ccc;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:7pt;color:#bbb">\u0627\u0644\u062a\u0648\u0642\u064a\u0639</div></div>';
+  h+='</div>';
+  h+='<div style="margin-top:10px;border-top:1px solid #ccc;padding-top:6px;font-size:7.5pt;color:#666;text-align:center">*(1) \u0635\u0644\u0627\u062d\u064a\u0629 \u0647\u0630\u0647 \u0627\u0644\u0648\u062b\u064a\u0642\u0629 \u062b\u0644\u0627\u062b\u0629 (3) \u0623\u0634\u0647\u0631<br>\u0635\u0627\u062f\u0631\u0629 \u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a\u0627\u064b \u0639\u0628\u0631 \u0645\u0646\u0635\u0629 <strong>ORDO</strong></div>';
+  h+='</div>';
+  return h;
+}
+
+function printDoc(){
+  var docEl=document.getElementById('doc-content');
+  if(!docEl){ toast('لا توجد وثيقة للطباعة','err'); return; }
+  var docHtml=docEl.innerHTML;
+  var isRes=selectedDocType==='res';
+  var accentColor=isRes?'#1565c0':'#1b5e42';
+
+  var w=window.open('','_blank','width=1000,height=1300');
+  w.document.write([
+    '<!DOCTYPE html><html dir="rtl" lang="ar"><head>',
+    '<meta charset="UTF-8">',
+    '<title>'+(isRes?'بطاقة إقامة':'شهادة الميلاد')+'</title>',
+    '<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">',
+    '<style>',
+    '  *{margin:0;padding:0;box-sizing:border-box}',
+    '  body{font-family:Cairo,Tajawal,sans-serif;direction:rtl;color:#1a2a22;background:#fff;padding:2cm 2.2cm}',
+    '  table{border-collapse:collapse;width:100%}',
+    '  @page{size:A4;margin:1.8cm 2cm}',
+    '  @media print{',
+    '    body{padding:0}',
+    '    .no-print{display:none}',
+    '  }',
+    '  .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-35deg);',
+    '    font-family:Tajawal,sans-serif;font-size:72pt;font-weight:800;color:rgba(27,94,66,0.04);',
+    '    pointer-events:none;z-index:0;white-space:nowrap}',
+    '  .content{position:relative;z-index:1}',
+    '  /* Print button */',
+    '  .print-bar{background:;color:#fff;padding:10px 20px;display:flex;align-items:center;',
+    '    justify-content:space-between;margin-bottom:18px;border-radius:8px;font-size:9pt}',
+    '  .print-bar button{background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.35);',
+    '    border-radius:6px;padding:5px 14px;cursor:pointer;font-family:Cairo,sans-serif;font-size:8.5pt;font-weight:700}',
+    '  .print-bar button:hover{background:rgba(255,255,255,0.3)}',
+    '</style>',
+    '</head><body>',
+    '<div class="watermark no-print">ORDO</div>',
+    '<div class="print-bar no-print">',
+    '  <span style="font-family:Tajawal,sans-serif;font-weight:800;font-size:11pt"></span>',
+    '  <button onclick="window.print()"></button>',
+    '</div>',
+    '<div class="content">',
+    docHtml,
+    '</div>',
+    '</body></html>'
+  ].join('\n'));
+  w.document.close();
+  w.focus();
+}
+
+function submitDocReq(){
+  if(!selectedDocType){ toast('اختر نوع الوثيقة','err'); return; }
+  var names = { birth:'شهادة الميلاد', res:'بطاقة الإقامة' };
+  var ref   = 'DOC-'+new Date().getFullYear()+'-'+String(docsList.length+1).padStart(5,'0');
+  var entry = {
+    ref: ref, type: selectedDocType, typeName: names[selectedDocType]||selectedDocType,
+    copies: gv('doc-copies'), purpose: gv('doc-purpose'),
+    status: 'pending', created: new Date().toLocaleDateString('ar-DZ'), userNin: U.nin
+  };
+  docsList.push(entry);
+  localStorage.setItem('ordo_docs_list', JSON.stringify(docsList));
+  toast('تم إرسال الطلب — ستُعالج خلال 48 ساعة');
+}
+
+function renderMyDocs(){
+  var myDocs = docsList.filter(function(d){ return d.userNin===U.nin; }).slice().reverse();
+  var el = document.getElementById('my-docs-list');
+  if(!myDocs.length){
+    el.innerHTML = '<div class="empty-state"><i class="fas fa-folder-open"></i><p>لا توجد وثائق مطلوبة بعد</p></div>';
+    return;
+  }
+  el.innerHTML = myDocs.map(function(d){
+    return '<div class="ac" style="margin-bottom:.7rem">'
+      +'<div class="ac-ico" style="background:rgba(27,94,66,0.08);color:var(--g)"><i class="fas fa-file-alt"></i></div>'
+      +'<div class="ac-info"><h4>'+d.typeName+'</h4><p>'+d.copies+' نسخة · '+d.purpose+'</p>'
+      +'<span class="bdg pnd">قيد المعالجة</span></div>'
+      +'<div class="ac-meta"><div class="ac-date">'+d.ref+'</div><div class="ac-time">'+d.created+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+</script>
+
+<div class="sb-overlay" id="__overlay" onclick="toggleSidebar()"></div>
+<script>
+function toggleSidebar(){
+  var sb=document.querySelector('.sb'),ov=document.getElementById('__overlay');
+  var open=sb.classList.toggle('mob-open');
+  ov.style.display=open?'block':'none';
+  document.body.style.overflow=open?'hidden':'';
+}
+document.querySelectorAll('.ni').forEach(function(ni){
+  ni.addEventListener('click',function(){
+    if(window.innerWidth<=860){
+      document.querySelector('.sb').classList.remove('mob-open');
+      document.getElementById('__overlay').style.display='none';
+      document.body.style.overflow='';
+    }
+  });
+});
+</script>
+</body>
+</html>

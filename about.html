@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORDO · من نحن</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{
+            --green:#1b5e42;
+            --green-light:#236b50;
+            --green-dark:#133d2c;
+            --accent:#c8a84b;
+            --white:#ffffff;
+            --off-white:#f5f5f0;
+            --text:#1a2a22;
+            --text-muted:#5a7066;
+            --border:#d4e0d8;
+        }
+        html{scroll-behavior:smooth}
+        body{font-family:'Cairo','Tajawal',sans-serif;background:var(--white);color:var(--text);direction:rtl;overflow-x:hidden}
+/* متغيرات للتحكم بالألوان بسهولة */
+:root {
+  --scrollbar-size: 12px;
+  --scrollbar-bg: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: linear-gradient(135deg, #1b5e42, #2e8b57, #3cb371);
+  --scrollbar-thumb-hover: linear-gradient(135deg, #145c3a, #1b5e42, #2e8b57);
+  --scrollbar-glow: rgba(46, 139, 87, 0.45);
+}
+
+/* الشريط بالكامل */
+::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+/* المسار */
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.08);
+}
+
+/* المقبض */
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: 
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+  box-shadow:
+    0 0 0px transparent,
+    0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* تأثير Hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  transform: scale(1.15);
+  box-shadow:
+    0 0 12px var(--scrollbar-glow),
+    0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* عند السحب */
+::-webkit-scrollbar-thumb:active {
+  transform: scale(1.05);
+  box-shadow:
+    0 0 16px var(--scrollbar-glow),
+    inset 0 0 4px rgba(0,0,0,0.2);
+}
+
+/* زوايا التقاء الشريط */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* دعم فايرفوكس */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #1b5e42 rgba(0,0,0,0.05);
+}
+
+        /* NAV */
+        .topnav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(27,94,66,0.97);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.1)}
+        .topnav-inner{max-width:1300px;margin:0 auto;padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between}
+        .nav-brand{display:flex;align-items:center;gap:1rem;text-decoration:none}
+        .nav-logo{font-family:'Tajawal',sans-serif;font-size:1.6rem;font-weight:800;color:var(--white);letter-spacing:3px}
+        .nav-divider{width:1px;height:24px;background:rgba(255,255,255,0.3)}
+        .nav-tagline{font-size:0.78rem;color:rgba(255,255,255,0.7);font-weight:300}
+        .nav-links{display:flex;gap:2rem}
+        .nav-links a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s}
+        .nav-links a:hover,.nav-links a.active{color:var(--accent)}
+
+        /* PAGE HERO */
+        .page-hero{padding-top:64px;background:linear-gradient(160deg,var(--green-dark) 0%,var(--green) 100%);position:relative;overflow:hidden}
+        .page-hero-inner{max-width:1300px;margin:0 auto;padding:5rem 2rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+        .hero-text-block{position:relative;z-index:2}
+        .page-crumb{display:inline-flex;align-items:center;gap:0.5rem;color:rgba(255,255,255,0.5);font-size:0.78rem;font-weight:400;margin-bottom:1.5rem}
+        .page-crumb a{color:rgba(255,255,255,0.6);text-decoration:none}
+        .page-crumb i{font-size:0.6rem}
+        .page-hero-title{font-family:'Tajawal',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;color:var(--white);line-height:1.1;margin-bottom:1.2rem}
+        .page-hero-title span{color:var(--accent)}
+        .page-hero-desc{font-size:1rem;color:rgba(255,255,255,0.7);line-height:1.9;font-weight:300;max-width:480px}
+        .hero-image-block{position:relative;z-index:2}
+        .hero-img-frame{position:relative}
+        .hero-img-frame img{width:100%;height:380px;object-fit:cover;border-radius:20px;filter:brightness(0.85) saturate(1.1)}
+        .hero-img-badge{position:absolute;bottom:-20px;right:-20px;background:var(--accent);color:var(--white);border-radius:14px;padding:1.2rem 1.5rem;font-family:'Tajawal',sans-serif;box-shadow:0 10px 30px rgba(0,0,0,0.2)}
+        .hero-img-badge strong{display:block;font-size:2rem;font-weight:800;line-height:1}
+        .hero-img-badge span{font-size:0.8rem;opacity:0.9;font-weight:400}
+        .hero-geo-lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden}
+        .hero-geo-lines::before{content:'';position:absolute;top:-100px;left:-100px;width:600px;height:600px;border:1px solid rgba(255,255,255,0.05);border-radius:50%}
+        .hero-geo-lines::after{content:'';position:absolute;top:-50px;left:-50px;width:400px;height:400px;border:1px solid rgba(255,255,255,0.04);border-radius:50%}
+
+        /* SECTIONS COMMON */
+        .section-label{display:inline-block;background:rgba(27,94,66,0.08);color:var(--green);font-size:0.72rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:0.3rem 0.9rem;border-radius:50px;margin-bottom:0.9rem;border:1px solid rgba(27,94,66,0.15)}
+        .section-label.white{background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85);border-color:rgba(255,255,255,0.18)}
+        .section-title{font-family:'Tajawal',sans-serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:var(--text);margin-bottom:0.5rem}
+        .section-title.white{color:var(--white)}
+        .section-sub{font-size:0.9rem;color:var(--text-muted);line-height:1.8;max-width:560px}
+
+        /* ABOUT SECTION */
+        .about-section{padding:7rem 2rem}
+        .about-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+        .about-visual{position:relative}
+        .about-visual-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .about-visual-grid img{width:100%;border-radius:14px;object-fit:cover}
+        .about-visual-grid img:first-child{height:220px}
+        .about-visual-grid img:nth-child(2){height:220px;margin-top:2rem}
+        .about-visual-grid img:nth-child(3){height:180px;grid-column:1/-1}
+        .about-accent-card{position:absolute;bottom:-30px;left:-30px;background:var(--green);color:var(--white);border-radius:16px;padding:1.5rem;max-width:200px;box-shadow:0 15px 40px rgba(27,94,66,0.3)}
+        .about-accent-card i{font-size:2rem;color:var(--accent);margin-bottom:0.8rem;display:block}
+        .about-accent-card strong{display:block;font-size:1rem;font-weight:700;margin-bottom:0.3rem}
+        .about-accent-card span{font-size:0.78rem;opacity:0.7;font-weight:300;line-height:1.5}
+        .about-text{padding-right:1rem}
+        .about-text p{font-size:0.92rem;color:var(--text-muted);line-height:2;font-weight:400;margin-bottom:1.2rem}
+        .about-highlights{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+        .highlight-item{display:flex;align-items:flex-start;gap:0.8rem;padding:1.2rem;background:var(--off-white);border-radius:12px;border:1px solid var(--border)}
+        .highlight-item i{color:var(--accent);font-size:1.1rem;margin-top:2px}
+        .highlight-item strong{display:block;font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:0.2rem}
+        .highlight-item span{font-size:0.78rem;color:var(--text-muted);line-height:1.5}
+
+        /* SERVICES SECTION */
+        .services-section{padding:7rem 2rem;background:var(--off-white)}
+        .services-inner{max-width:1200px;margin:0 auto}
+        .services-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;gap:2rem;flex-wrap:wrap}
+        .services-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+        .svc{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:2.2rem 1.8rem;transition:all 0.3s;cursor:pointer;position:relative;overflow:hidden}
+        .svc::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--green),var(--accent));transform:scaleX(0);transition:transform 0.3s;transform-origin:right}
+        .svc:hover::after{transform:scaleX(1)}
+        .svc:hover{box-shadow:0 12px 40px rgba(27,94,66,0.1);transform:translateY(-4px);border-color:var(--green)}
+        .svc-icon{width:54px;height:54px;background:rgba(27,94,66,0.07);border-radius:14px;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:1.4rem;margin-bottom:1.4rem}
+        .svc h3{font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:0.5rem}
+        .svc p{font-size:0.82rem;color:var(--text-muted);line-height:1.8;font-weight:400}
+        .svc-tag{display:inline-block;margin-top:1rem;font-size:0.68rem;font-weight:700;letter-spacing:0.5px;padding:0.2rem 0.7rem;border-radius:50px;background:rgba(27,94,66,0.08);color:var(--green);border:1px solid rgba(27,94,66,0.15)}
+        .svc-tag.soon{background:rgba(200,168,75,0.1);color:var(--accent);border-color:rgba(200,168,75,0.2)}
+
+        /* TEAM SECTION */
+        .team-section{padding:7rem 2rem;background:var(--green)}
+        .team-inner{max-width:1200px;margin:0 auto}
+        .team-header{text-align:center;margin-bottom:4rem}
+        .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+        .team-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:2.5rem 2rem;text-align:center;transition:all 0.3s;position:relative;overflow:hidden}
+        .team-card:hover{background:rgba(255,255,255,0.12);border-color:var(--accent);transform:translateY(-5px)}
+        .team-avatar{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.2);margin:0 auto 1.4rem;display:block;filter:grayscale(20%)}
+        .team-avatar-placeholder{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.2),rgba(255,255,255,0.08));border:3px solid rgba(255,255,255,0.15);margin:0 auto 1.4rem;display:flex;align-items:center;justify-content:center;font-family:'Tajawal',sans-serif;font-size:2rem;font-weight:800;color:rgba(255,255,255,0.7)}
+        .team-name{font-family:'Tajawal',sans-serif;font-size:1.15rem;font-weight:700;color:var(--white);margin-bottom:0.3rem}
+        .team-role{font-size:0.8rem;color:var(--accent);font-weight:600;letter-spacing:0.5px;margin-bottom:1rem}
+        .team-bio{font-size:0.82rem;color:rgba(255,255,255,0.55);line-height:1.8;font-weight:300}
+        .team-links{display:flex;justify-content:center;gap:0.7rem;margin-top:1.2rem}
+        .team-link{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.6);font-size:0.85rem;text-decoration:none;transition:all 0.2s}
+        .team-link:hover{background:var(--accent);border-color:var(--accent);color:var(--white)}
+        .team-divider{width:40px;height:2px;background:rgba(255,255,255,0.1);margin:1.2rem auto}
+        .founder-badge{position:absolute;top:1.2rem;left:1.2rem;font-size:0.65rem;font-weight:700;letter-spacing:0.5px;padding:0.2rem 0.6rem;border-radius:50px;background:rgba(200,168,75,0.2);color:var(--accent);border:1px solid rgba(200,168,75,0.3)}
+
+        /* GALLERY */
+        .gallery-section{padding:7rem 2rem}
+        .gallery-inner{max-width:1300px;margin:0 auto}
+        .gallery-header{margin-bottom:3rem}
+        .gallery-masonry{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto;gap:1.2rem}
+        .gallery-item{border-radius:16px;overflow:hidden;position:relative;cursor:pointer}
+        .gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s ease}
+        .gallery-item:hover img{transform:scale(1.05)}
+        .gallery-item .gal-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(27,94,66,0.8),transparent);opacity:0;transition:opacity 0.3s;display:flex;align-items:flex-end;padding:1.2rem}
+        .gallery-item:hover .gal-overlay{opacity:1}
+        .gal-overlay span{color:var(--white);font-size:0.85rem;font-weight:600}
+        .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2}
+        .gallery-item:nth-child(1) img{height:360px}
+        .gallery-item:nth-child(2) img,.gallery-item:nth-child(3) img{height:170px}
+        .gallery-item:nth-child(4) img,.gallery-item:nth-child(5) img{height:220px}
+        .gallery-item:nth-child(6) img{height:220px}
+
+        /* MAP SECTION */
+        .location-section{padding:7rem 2rem;background:var(--off-white)}
+        .location-inner{max-width:1200px;margin:0 auto}
+        .location-layout{display:grid;grid-template-columns:1fr 360px;gap:2.5rem;align-items:start;margin-top:3rem}
+        #about-map{height:500px;border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 10px 40px rgba(0,0,0,0.08);z-index:1}
+        .location-details{display:flex;flex-direction:column;gap:1.2rem}
+        .loc-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:1.8rem}
+        .loc-card-title{display:flex;align-items:center;gap:0.8rem;font-size:0.85rem;font-weight:700;color:var(--green);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.5px}
+        .loc-card-title i{font-size:1rem;color:var(--accent)}
+        .loc-info-row{display:flex;align-items:flex-start;gap:0.8rem;padding:0.8rem 0;border-bottom:1px solid var(--border);font-size:0.85rem}
+        .loc-info-row:last-child{border-bottom:none;padding-bottom:0}
+        .loc-info-row i{color:var(--text-muted);font-size:0.85rem;margin-top:2px;width:16px}
+        .loc-info-row span{color:var(--text-muted);line-height:1.6}
+        .loc-info-row strong{color:var(--text);font-weight:600}
+        .hours-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+        .hour-row{font-size:0.8rem;display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px dotted var(--border);color:var(--text-muted)}
+        .hour-row:last-child{border-bottom:none}
+        .hour-row span:last-child{color:var(--green);font-weight:600}
+        .hour-row.closed span:last-child{color:#c62828}
+
+        /* CONTACT */
+        .contact-section{padding:7rem 2rem;background:var(--green-dark);position:relative;overflow:hidden}
+        .contact-bg{position:absolute;inset:0;pointer-events:none}
+        .contact-bg::before{content:'';position:absolute;top:-200px;left:-200px;width:600px;height:600px;border:1px solid rgba(255,255,255,0.04);border-radius:50%}
+        .contact-bg::after{content:'';position:absolute;bottom:-150px;right:-150px;width:400px;height:400px;border:1px solid rgba(255,255,255,0.03);border-radius:50%}
+        .contact-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+        .contact-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:4rem;align-items:start;margin-top:3rem}
+        .contact-info h3{font-family:'Tajawal',sans-serif;font-size:1.5rem;font-weight:700;color:var(--white);margin-bottom:1rem}
+        .contact-info p{font-size:0.88rem;color:rgba(255,255,255,0.55);line-height:1.9;font-weight:300;margin-bottom:2rem}
+        .contact-methods{display:flex;flex-direction:column;gap:1rem}
+        .contact-method{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;transition:all 0.3s}
+        .contact-method:hover{background:rgba(255,255,255,0.09);border-color:var(--accent)}
+        .contact-method i{width:40px;height:40px;background:rgba(200,168,75,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1rem;flex-shrink:0}
+        .contact-method-text strong{display:block;font-size:0.82rem;font-weight:700;color:rgba(255,255,255,0.9);margin-bottom:0.2rem}
+        .contact-method-text span{font-size:0.78rem;color:rgba(255,255,255,0.45);font-weight:300}
+        .contact-form{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:2.5rem}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+        .form-group{margin-bottom:1rem}
+        .form-group label{display:block;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;letter-spacing:0.3px}
+        .form-group input,.form-group textarea,.form-group select{width:100%;padding:0.9rem 1.1rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--white);font-family:'Cairo',sans-serif;font-size:0.88rem;font-weight:400;transition:all 0.2s;outline:none;resize:none}
+        .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,0.25)}
+        .form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--accent);background:rgba(255,255,255,0.09)}
+        .form-group select option{background:#133d2c;color:var(--white)}
+        .form-group textarea{height:130px}
+        .submit-btn{width:100%;padding:1rem;background:var(--accent);color:var(--white);border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.3s;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:0.7rem}
+        .submit-btn:hover{background:#d4b050;transform:translateY(-2px);box-shadow:0 8px 25px rgba(200,168,75,0.3)}
+        .form-success{display:none;text-align:center;padding:2rem;color:rgba(255,255,255,0.8);font-size:0.9rem}
+        .form-success i{display:block;font-size:2.5rem;color:var(--accent);margin-bottom:1rem}
+
+        /* FOOTER */
+        footer{background:var(--green-dark);border-top:1px solid rgba(255,255,255,0.06)}
+        .footer-inner{max-width:1200px;margin:0 auto;padding:2.5rem 2rem;display:flex;align-items:center;gap:2rem}
+        .footer-logo{font-family:'Tajawal',sans-serif;font-size:1.8rem;font-weight:800;color:var(--white);letter-spacing:4px;display:block;margin-bottom:0.3rem}
+        .footer-brand p{font-size:0.78rem;color:rgba(255,255,255,0.4);font-weight:300}
+        .footer-sep{flex:1;height:1px;background:rgba(255,255,255,0.06)}
+        .footer-info p{font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.8}
+
+        /* ANIMATIONS */
+        .fade-in{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+        .fade-in.visible{opacity:1;transform:translateY(0)}
+
+        /* RESPONSIVE */
+        @media(max-width:1024px){
+  .page-hero-inner{grid-template-columns:1fr;gap:2.5rem;padding:4rem 1.5rem 3rem}
+  .hero-image-block{display:none}
+  .about-inner{grid-template-columns:1fr;gap:3rem}
+  .about-visual{display:none}
+  .services-list{grid-template-columns:repeat(2,1fr)}
+  .team-grid{grid-template-columns:repeat(2,1fr)}
+  .gallery-masonry{grid-template-columns:repeat(2,1fr)}
+  .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 1}
+  .gallery-item:nth-child(1) img{height:220px}
+  .gallery-item:nth-child(2) img,.gallery-item:nth-child(3) img{height:180px}
+  .gallery-item:nth-child(4) img,.gallery-item:nth-child(5) img,.gallery-item:nth-child(6) img{height:180px}
+  .location-layout{grid-template-columns:1fr}
+  #about-map{height:320px}
+}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .nav-ham{display:flex!important}
+  .mob-nav{display:none;flex-direction:column;background:rgba(19,61,44,.97);padding:1rem 0;border-top:1px solid rgba(255,255,255,.08)}
+  .mob-nav.open{display:flex}
+  .mob-nav a{padding:.85rem 2rem;color:rgba(255,255,255,.82);font-size:.92rem;text-decoration:none;font-weight:500;border-bottom:1px solid rgba(255,255,255,.05)}
+  .mob-nav a:hover{color:var(--accent)}
+  .topnav-inner{padding:0 1.2rem}
+  .about-section,.services-section,.team-section,.gallery-section,.location-section{padding:4rem 1.2rem}
+  .services-list{grid-template-columns:1fr}
+  .team-grid{grid-template-columns:1fr}
+  .gallery-masonry{grid-template-columns:1fr}
+  .gallery-item:nth-child(1){grid-column:span 1}
+  .gallery-item img{height:200px!important}
+  .services-header{flex-direction:column;align-items:flex-start}
+  .about-highlights{grid-template-columns:1fr}
+  .hours-grid{grid-template-columns:1fr}
+  .page-hero-inner{padding:3rem 1.2rem 2.5rem}
+  .page-hero-title{font-size:clamp(2rem,8vw,3rem)}
+  .hero-img-badge{right:0;bottom:-10px}
+}
+
+/* ── MOBILE NAV ── */
+.nav-ham{display:none;width:38px;height:38px;border-radius:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);align-items:center;justify-content:center;cursor:pointer;color:rgba(255,255,255,.85);font-size:1rem;transition:all .2s}
+.nav-ham:hover{background:rgba(255,255,255,.2)}
+.mob-nav{display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(19,61,44,.97);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.08);z-index:999}
+    </style>
+</head>
+<body>
+
+    <nav class="topnav">
+        <div class="topnav-inner">
+            <a href="index.html" class="nav-brand">
+                <span class="nav-logo">ORDO</span>
+                <span class="nav-divider"></span>
+                <span class="nav-tagline">الجمهورية الجزائرية الديمقراطية الشعبية</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">الرئيسية</a>
+                <a href="#about">حولنا </a>
+         
+ 
+            </div>
+        <button class="nav-ham" id="nav-ham" onclick="toggleMobNav()" aria-label="القائمة"><i class="fas fa-bars" id="ham-ico"></i></button>
+        </div>
+    </nav>
+    <div class="mob-nav" id="mob-nav">
+        <a href="index.html">الرئيسية</a>
+        <a href="about.html" class="active">من نحن</a>
+        <a href="auth.html">تسجيل الدخول</a>
+        <a href="auth.html">احجز موعدك</a>
+    </div>
+
+    <section class="page-hero">
+        <div class="hero-geo-lines"></div>
+        <div class="page-hero-inner">
+            <div class="hero-text-block">
+                <p class="page-crumb">
+                    <a href="index.html">الرئيسية</a>
+                    <i class="fas fa-chevron-left"></i>
+                    من نحن
+                </p>
+                <h1 class="page-hero-title">
+                    نبني مستقبل<br>
+                    <span>الإدارة الرقمية</span><br>
+                    في الجزائر
+                </h1>
+                <p class="page-hero-desc">
+                    ORDO مشروع وطني طموح يهدف إلى تحويل تجربة المواطن مع الإدارة الجزائرية من الانتظار الطويل إلى خدمة فورية ذكية في متناول الجميع.
+                </p>
+            </div>
+            <div class="hero-image-block">
+                <div class="hero-img-frame">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=700&q=80" alt="مقر ORDO">
+                    <div class="hero-img-badge">
+                        <strong>2026</strong>
+                        <span>سنة التأسيس</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section" id="about">
+        <div class="about-inner">
+            <div class="about-visual fade-in">
+                <div class="about-visual-grid">
+                    <img src="https://images.unsplash.com/photo-1531973576160-7125cd663d86?w=400&q=80" alt="مكتب عمل">
+                    <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=400&q=80" alt="اجتماع فريق">
+                    <img src="https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=800&q=80" alt="قاعة عمل">
+                </div>
+                <div class="about-accent-card">
+                    <i class="fas fa-award"></i>
+                    <strong>مشروع وطني معتمد</strong>
+                    <span>تحت إشراف وزارة الرقمنة والإحصاء</span>
+                </div>
+            </div>
+            <div class="about-text fade-in">
+                <span class="section-label">قصتنا</span>
+                <h2 class="section-title" style="margin-bottom:1.5rem">من نحن؟</h2>
+                <p>
+                    ORDO هي منصة رقمية جزائرية أُسست عام 2026 بهدف واحد: إنهاء ظاهرة الطوابير الطويلة والانتظار العشوائي في الإدارات الحكومية والمصالح العامة.
+                </p>
+                <p>
+                    انطلقت الفكرة من ملاحظة بسيطة — المواطن الجزائري يضيع ساعات من وقته أمام مصالح يمكن تنظيمها رقمياً. لذلك بنينا منظومة متكاملة تربط المواطن بمصلحته المختارة عبر نظام حجز ذكي يعمل على مدار الساعة.
+                </p>
+                <p>
+                    اليوم نغطي 58 ولاية و1541 بلدية، مع فريق يضم مهندسين وخبراء إداريين جزائريين يؤمنون بأن التحول الرقمي ليس رفاهية بل ضرورة وطنية.
+                </p>
+                <div class="about-highlights">
+                    <div class="highlight-item">
+                        <i class="fas fa-bullseye"></i>
+                        <div>
+                            <strong>رؤيتنا</strong>
+                            <span>جزائر بلا طوابير بحلول 2030</span>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <i class="fas fa-rocket"></i>
+                        <div>
+                            <strong>مهمتنا</strong>
+                            <span>تبسيط الوصول لكل الخدمات العامة</span>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <i class="fas fa-shield-halved"></i>
+                        <div>
+                            <strong>قيمنا</strong>
+                            <span>الشفافية والكفاءة والتقارب</span>
+                        </div>
+                    </div>
+                    <div class="highlight-item">
+                        <i class="fas fa-globe"></i>
+                        <div>
+                            <strong>طموحنا</strong>
+                            <span>نموذج يُحتذى به في المنطقة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="services-section" id="services">
+        <div class="services-inner">
+            <div class="services-header">
+                <div>
+                    <span class="section-label">ما نقدمه</span>
+                    <h2 class="section-title">خدمات المنصة</h2>
+                </div>
+                <p class="section-sub">
+                    ست خدمات محورية تغطي أكثر الاحتياجات الإدارية تكراراً في حياة المواطن الجزائري — مع المزيد قيد التطوير.
+                </p>
+            </div>
+            <div class="services-list">
+                <div class="svc fade-in">
+                    <div class="svc-icon"><i class="fas fa-passport"></i></div>
+                    <h3>جوازات السفر</h3>
+                    <p>احجز موعدك لاستخراج أو تجديد جواز السفر دون الحاجة للانتظار. يشمل تقديم الملفات ومتابعة حالة الطلب.</p>
+                    <span class="svc-tag">متاح الآن</span>
+                </div>
+                <div class="svc fade-in">
+                    <div class="svc-icon"><i class="fas fa-id-card"></i></div>
+                    <h3>بطاقة التعريف الوطنية</h3>
+                    <p>خدمة طلب وتجديد بطاقة الهوية الوطنية البيومترية مع تتبع المراحل وإشعارات الجاهزية.</p>
+                    <span class="svc-tag">متاح الآن</span>
+                </div>
+             
+          
+                <div class="svc fade-in">
+                    <div class="svc-icon"><i class="fas fa-gavel"></i></div>
+                    <h3>الخدمات القضائية</h3>
+                    <p>مواعيد المحاكم ومصالح العدالة وإجراءات التوثيق والتصديق، مع متابعة الملفات عن بعد.</p>
+                    <span class="svc-tag ">متاح الأن</span>
+                </div>
+      
+            </div>
+        </div>
+    </section>
+
+   
+    <section class="gallery-section" id="gallery">
+        <div class="gallery-inner">
+            <div class="gallery-header fade-in">
+                <span class="section-label">بيئة العمل</span>
+                <h2 class="section-title">من داخل مؤسستنا</h2>
+            </div>
+            <div class="gallery-masonry">
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80" alt="قاعة العمل الرئيسية">
+                    <div class="gal-overlay"><span>قاعة العمل الرئيسية</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&q=80" alt="غرفة الاجتماعات">
+                    <div class="gal-overlay"><span>غرفة الاجتماعات</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&q=80" alt="مختبر التطوير">
+                    <div class="gal-overlay"><span>مختبر التطوير</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=500&q=80" alt="جلسة عصف ذهني">
+                    <div class="gal-overlay"><span>جلسة عصف ذهني</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500&q=80" alt="ورشة عمل">
+                    <div class="gal-overlay"><span>ورشة عمل تقنية</span></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?w=500&q=80" alt="فريق العمل">
+                    <div class="gal-overlay"><span>فريق ORDO</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="location-section" id="location">
+        <div class="location-inner">
+            <div class="fade-in">
+                <span class="section-label">أين نحن</span>
+                <h2 class="section-title">موقع المؤسسة</h2>
+            </div>
+            <div class="location-layout">
+                <div id="about-map"></div>
+                <div class="location-details fade-in">
+                    <div class="loc-card">
+                        <div class="loc-card-title"><i class="fas fa-map-pin"></i> العنوان</div>
+                        <div class="loc-info-row">
+                            <i class="fas fa-building"></i>
+                            <span><strong>مركز ORDO للتقنية</strong><br>   </span>
+                        </div>
+                        <div class="loc-info-row">
+                            <i class="fas fa-city"></i>
+                            <span>  الجزائر ولاية تيارت</span>
+                        </div>
+                        <div class="loc-info-row">
+                            <i class="fas fa-mail-bulk"></i>
+                            <span>الرمز البريدي: 16000</span>
+                        </div>
+                    </div>
+                    <div class="loc-card">
+                        <div class="loc-card-title"><i class="fas fa-clock"></i> ساعات العمل</div>
+                        <div class="hours-grid">
+                            <div class="hour-row"><span>الأحد – الخميس</span><span>08:00 – 17:00</span></div>
+                            <div class="hour-row"><span>السبت</span><span>09:00 – 13:00</span></div>
+                            <div class="hour-row closed"><span>الجمعة</span><span>مغلق</span></div>
+                        </div>
+                    </div>
+                    <div class="loc-card">
+                        <div class="loc-card-title"><i class="fas fa-phone"></i> التواصل السريع</div>
+                        <div class="loc-info-row">
+                            <i class="fas fa-phone"></i>
+                            <span>0699984648</span>
+                        </div>
+                        <div class="loc-info-row">
+                            <i class="fas fa-envelope"></i>
+                            <span>conect@ordo.com</span>
+                        </div>
+                        <div class="loc-info-row">
+                            <i class="fas fa-globe"></i>
+                            <span>غير متاح حاليا</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+        <div class="contact-bg"></div>
+        <div class="contact-inner">
+            <div style="text-align:center">
+                <span class="section-label white">راسلنا</span>
+                <h2 class="section-title white">تواصل معنا</h2>
+            </div>
+            <div class="contact-layout">
+                <div class="contact-info fade-in">
+                    <h3>نسمعك دائماً</h3>
+                    <p>سواء كنت مواطناً تريد الاستفسار عن خدمة، أو مؤسسة تريد الانضمام للمنصة، أو شريكاً محتملاً — فريق ORDO حاضر للإجابة.</p>
+                    <div class="contact-methods">
+                        <div class="contact-method">
+                            <i class="fas fa-envelope"></i>
+                            <div class="contact-method-text">
+                                <strong>البريد الإلكتروني</strong>
+                                <span>        conect@ordo.com</span>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-phone"></i>
+                            <div class="contact-method-text">
+                                <strong>الهاتف</strong>
+                                <span> 0699984648   </span>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fab fa-whatsapp"></i>
+                            <div class="contact-method-text">
+                                <strong>واتساب</strong>
+                                <span>213699984648+ </span>
+                            </div>
+                        </div>
+                        <div class="contact-method">
+                            <i class="fas fa-location-dot"></i>
+                            <div class="contact-method-text">
+                                <strong>المقر الرئيسي</strong>
+                                <span>   تيارت</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form fade-in">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>الاسم الكامل</label>
+                            <input type="text" placeholder="أدخل اسمك">
+                        </div>
+                        <div class="form-group">
+                            <label>البريد الإلكتروني</label>
+                            <input type="email" placeholder="example@email.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>موضوع الرسالة</label>
+                        <select>
+                            <option value="" disabled selected>اختر موضوع الرسالة</option>
+                            <option>استفسار عن خدمة</option>
+                            <option>طلب انضمام مؤسسة</option>
+                            <option>الإبلاغ عن مشكلة تقنية</option>
+                            <option>شراكة أو تعاون</option>
+                            <option>أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>رسالتك</label>
+                        <textarea placeholder="اكتب رسالتك هنا..."></textarea>
+                    </div>
+                    <button class="submit-btn" id="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        إرسال الرسالة
+                    </button>
+                    <div class="form-success" id="form-success">
+                        <i class="fas fa-circle-check"></i>
+                        تم إرسال رسالتك بنجاح!<br>سيتواصل معك فريقنا خلال 24 ساعة.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="footer-logo">ORDO</span>
+                <p>منصة الحجوزات الذكية الجزائرية</p>
+            </div>
+            <div class="footer-sep"></div>
+            <div class="footer-info">
+                <p>© 2025 ORDO — جميع الحقوق محفوظة</p>
+                <p>الجمهورية الجزائرية الديمقراطية الشعبية</p>
+            </div>
+        </div>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+var map = L.map('about-map').setView([35.3789, 1.3167], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map);
+        var icon = L.divIcon({
+            html:'<div style="background:#1b5e42;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.35);"></div>',
+            className:'',iconSize:[18,18],iconAnchor:[9,9]
+        });
+L.marker([35.3789, 1.3167],{icon:icon}).addTo(map)
+            .bindPopup('<strong style="font-family:Cairo,sans-serif;font-size:13px;">مقر ORDO الرئيسي</strong><br><small style="color:#5a7066;">تيارت   </small>')
+            .openPopup();
+
+        var observerOptions = {threshold:0.15};
+        var observer = new IntersectionObserver(function(entries){
+            entries.forEach(function(entry){
+                if(entry.isIntersecting){
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.fade-in').forEach(function(el){observer.observe(el)});
+
+        document.getElementById('submit-btn').addEventListener('click', function(){
+            var btn = this;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+            btn.style.opacity = '0.8';
+       setTimeout(function(){
+            btn.style.display = 'none';
+            document.getElementById('form-success').style.display = 'block';
+        }, 1500);
+    });
+
+    function toggleMobNav(){
+        var mn=document.getElementById('mob-nav');
+        var ico=document.getElementById('ham-ico');
+        var open=mn.classList.toggle('open');
+        ico.className=open?'fas fa-times':'fas fa-bars';
+    }
+</script>
+</body>
+</html>
