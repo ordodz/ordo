@@ -47,7 +47,89 @@ html,body{height:100%;font-family:'Cairo','Tajawal',sans-serif;direction:rtl;bac
 ::-webkit-scrollbar {
   width: 10px;
 }
+/* ═══════════════ MOBILE VERSION ═══════════════ */
+@media (max-width: 900px){
 
+  :root{
+    --sb: 0px;
+  }
+
+  body{
+    overflow:auto;
+  }
+
+  /* sidebar يتحول لقائمة مخفية */
+  .sb{
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    width: 260px;
+  }
+
+  .sb.open{
+    transform: translateX(0);
+  }
+
+  /* زر فتح القائمة */
+  .menu-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border-radius:8px;
+    border:1px solid var(--b);
+    background:#fff;
+    cursor:pointer;
+  }
+
+  .main{
+    margin-right:0;
+    width:100%;
+  }
+
+  .topbar{
+    padding:0 1rem;
+  }
+
+  /* الإحصائيات تتحول لعمودين */
+  .stats-row{
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  /* جميع الجريد تتحول لعمود واحد */
+  .g2,
+  .g3,
+  .g13,
+  .g31{
+    grid-template-columns: 1fr;
+  }
+
+  .content{
+    padding:1rem;
+  }
+
+  table{
+    font-size:.75rem;
+  }
+
+}
+
+/* جوالات صغيرة جداً */
+@media (max-width: 500px){
+
+  .stats-row{
+    grid-template-columns: 1fr;
+  }
+
+  .tb-title{
+    font-size:.95rem;
+  }
+
+  .tb-sub{
+    display:none;
+  }
+
+}
 ::-webkit-scrollbar-track {
   background: #f5f5f5;
 }
@@ -516,6 +598,7 @@ tr:hover td{background:var(--surface)}
 <div class="main">
   <!-- TOP BAR -->
   <div class="topbar">
+    
     <div class="tb-left">
       <div class="live-dot"></div>
       <div>
@@ -527,6 +610,9 @@ tr:hover td{background:var(--surface)}
       <button class="tb-btn" onclick="exportData()"><i class="fas fa-download"></i>تصدير البيانات</button>
       <button class="tb-btn" onclick="clearAll()"><i class="fas fa-trash"></i>مسح الكل</button>
       <button class="tb-btn primary" onclick="showPage('settings',null)"><i class="fas fa-cog"></i>الإعدادات</button>
+      <button class="menu-toggle" onclick="toggleSidebar()">
+  <i class="fas fa-bars"></i>
+</button>
     </div>
   </div>
 
@@ -2229,6 +2315,11 @@ document.querySelectorAll('.modal-backdrop').forEach(function(m){
 // INIT
 // ═══════════════════════════════════════════════════════════════════
 renderOverview();
+function toggleSidebar(){
+  document.querySelector('.sb').classList.toggle('open');
+}
 </script>
+
 </body>
+
 </html>
